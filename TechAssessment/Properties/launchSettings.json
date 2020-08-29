@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ConsoleApp1": {
+      "commandName": "Project",
+      "commandLineArgs": "4 5.5"
+    },
+    "TechAssessment": {
+      "commandName": "Project",
+      "commandLineArgs": "4 5.5"
+    }
+  }
+}
