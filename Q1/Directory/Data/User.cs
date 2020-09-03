@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Q1
 {
-    class User
+    public class User
     {
         #region Public properties
 

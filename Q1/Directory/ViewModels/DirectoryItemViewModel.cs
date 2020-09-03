@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace Q1
@@ -10,6 +11,8 @@ namespace Q1
     public class DirectoryItemViewModel : BaseViewModel
     {
         #region public properties
+
+        public DirectoryTreeNode Node { get; set; }
         public DirectoryItemType Type { get; set; }
         /// <summary>
         /// full path of item
@@ -60,11 +63,12 @@ namespace Q1
         /// </summary>
         /// <param name="fullpath">The full path of this item</param>
         /// <param name="type">The type of item</param>
-        public DirectoryItemViewModel(string fullpath, DirectoryItemType type)
+        public DirectoryItemViewModel(DirectoryTreeNode node)
         {
             // Set path and type
-            this.FullPath = fullpath;
-            this.Type = type;
+            this.FullPath = node.Item.FullPath;
+            this.Type = node.Item.Type;
+            Node = node;
 
             // setup the children as needed
             this.ClearChildren();
@@ -98,9 +102,10 @@ namespace Q1
             if (this.Type == DirectoryItemType.File)
                 return;
             //When expand, find all children
-            var children = DirectoryStructure.GetDirectoryContents(this.FullPath);
-            this.Children = new ObservableCollection<DirectoryItemViewModel>(
-                children.Select(content => new DirectoryItemViewModel(content.FullPath, content.Type)));
+            
+            Dictionary<string, DirectoryTreeNode> childrenNodes = Node.GetAllChildren();
+            Children = new ObservableCollection<DirectoryItemViewModel>(
+                childrenNodes.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
         }
     }
 }

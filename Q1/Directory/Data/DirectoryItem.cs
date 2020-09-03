@@ -9,7 +9,7 @@ namespace Q1
     /// <summary>
     /// Information about a directory item suchas a file
     /// </summary>
-    class DirectoryItem
+    public class DirectoryItem
     {
         #region Public properties
 

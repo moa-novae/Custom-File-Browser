@@ -7,7 +7,7 @@ using System.Linq;
 //https://stackoverflow.com/questions/9860207/build-a-simple-high-performance-tree-data-structure-in-c-sharp
 namespace Q1
 {
-    class DirectoryTreeNode : IEnumerable<DirectoryTreeNode>
+    public class DirectoryTreeNode : IEnumerable<DirectoryTreeNode>
     {
         private readonly Dictionary<string, DirectoryTreeNode> _children =
                                             new Dictionary<string, DirectoryTreeNode>();

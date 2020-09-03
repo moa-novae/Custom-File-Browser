@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Q1
@@ -23,9 +25,10 @@ namespace Q1
         /// </summary>
         public DirectoryStructureViewModel()
         {
-            var children = DirectoryStructure.GetLogicalDrives();
-            this.Items = new ObservableCollection<DirectoryItemViewModel>(
-                children.Select(drive => new DirectoryItemViewModel(drive.FullPath, DirectoryItemType.Drive)));
+            DirectoryTree tree = new DirectoryTree(@"C:\Program Files\AMD");
+            Dictionary<string, DirectoryTreeNode> rootChildren = tree.RootNode.GetAllChildren();
+            Items = new ObservableCollection<DirectoryItemViewModel>(
+                rootChildren.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
         }
         #endregion
     }

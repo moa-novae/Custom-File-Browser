@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Q1
 {
-    class DirectoryTree
+    public class DirectoryTree
     {
         public DirectoryTreeNode RootNode { get; private set; }
 
         #region Constructor
 
-        DirectoryTree(string startingDir)
+        public DirectoryTree(string startingDir)
         {
             DirectoryItem rootItem = new DirectoryItem
             {
