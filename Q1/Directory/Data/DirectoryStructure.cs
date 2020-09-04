@@ -14,16 +14,6 @@ namespace Q1
     class DirectoryStructure
     {
         /// <summary>
-        /// Get all logical drives on the computer
-        /// </summary>
-        /// <returns></returns>
-        public static List<DirectoryItem> GetLogicalDrives()
-        {
-            var items = new List<DirectoryItem>();
-            return Directory.GetLogicalDrives().Select(DriveInfo => new DirectoryItem { FullPath = DriveInfo, Type = DirectoryItemType.Drive }).ToList();
-        }
-
-        /// <summary>
         /// Gets the directorys top-level content
         /// </summary>
         /// <param name="fullPath">The full path to the directory</param>

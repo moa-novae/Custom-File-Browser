@@ -8,11 +8,12 @@ namespace Q1
     /// </summary>
     public class RelayCommand : ICommand
     {
-        #region Private Members
+        #region Readonly Members
         /// <summary>
         /// The action to run
         /// </summary>
-        private Action mAction;
+        readonly Action<object> _execute;
+        readonly Predicate<object> _canExecute;
         #endregion
 
         #region Public Events
@@ -20,16 +21,28 @@ namespace Q1
         /// <summary>
         /// Default constructor
         /// </summary>
-        public event EventHandler CanExecuteChanged = (sender, e) => { };
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
         #endregion
 
         #region Constructor
         /// <summary>
         /// Default constructor
         /// </summary>
-        public RelayCommand(Action action)
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
-            mAction = action;
+            if (execute == null)
+                throw new NullReferenceException("execute");
+            _execute = execute;
+            _canExecute = canExecute;
+        }
+        // For when nothing passed to canExecute
+        public RelayCommand(Action<object> execute) : this(execute, null)
+        {
+
         }
         #endregion
 
@@ -42,7 +55,7 @@ namespace Q1
         /// <returns></returns>
         public bool CanExecute(object parameter)
         {
-            return true;
+            return _canExecute == null ? true : _canExecute(parameter);
         }
         
         /// <summary>
@@ -51,7 +64,7 @@ namespace Q1
         /// <param name="parameter"></param>
         public void Execute(object parameter)
         {
-            mAction();
+            _execute.Invoke(parameter);
         }
         #endregion
     }

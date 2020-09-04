@@ -19,14 +19,21 @@ namespace Q1
         public MainWindow()
         {
             InitializeComponent();
+            var mainViewModel = new MainViewModel();
+            this.DataContext = mainViewModel;
+            
 
-            this.DataContext = new UserInterfaceViewModel();
+
         }
+
+
+
+
+
+
         #endregion
 
-
-
-
-
+       
+      
     }
 }

@@ -9,57 +9,83 @@
         Title="MainWindow" 
         Height="450" Width="800"
         MinHeight="400" MinWidth="400">
-    <Grid>
+    <DockPanel>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
-       
-        </Grid.ColumnDefinitions>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar ToolBarTray.IsLocked="True" >
 
-        <TreeView x:Name="UserView" ItemsSource="{Binding UserBrowser.Items}" Grid.Column="0">
+                <Button ToolTip="View User" >
+                    <Image Source="./images/view-user.png"/>
+                </Button>
+                <Button ToolTip="Add New User" Command="{Binding CreateNewUserWindowCommand}">
+                    <Image Source="./Images/add-user.png"/>
+                </Button>
+                <Button ToolTip="Edit User">
+                    <Image Source="./Images/edit-user.png"/>
+                </Button>
+                <Button ToolTip="Delete User">
+                    <Image Source="./Images/delete-user.png"/>
+                </Button>
+                <Separator/>
+                <Button ToolTip="Directory Item Properties">
+                    <Image Source="./Images/edit.png"/>
+                </Button>
 
-            <TreeView.ItemContainerStyle>   
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                </Style>
-            </TreeView.ItemContainerStyle>
+            </ToolBar>
+        </ToolBarTray>
 
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Width="20" Margin="3" 
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding UserBrowser.AllUsers}">
+                
+            </TextBlock>
+
+            <TabControl Grid.Column="1">
+                <TabItem Header="Files">
+                    <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.Items}" >
+
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="20" Margin="3" 
                                            Source="{Binding Type,
                                         Converter={x:Static local:HeaderToImageConverter.Instance}
                                         }"/>
-                        <TextBlock Text="{Binding Name}" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+
+                    </TreeView>
+                </TabItem>
+
+                <TabItem Header="Search">
+                    <StackPanel Orientation="Vertical">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width ="*"/>
+                                <ColumnDefinition Width ="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Margin="5" Grid.Column="0"/>
+                            <Button Grid.Column="1">
+                                Search
+                            </Button>
+                        </Grid>
                     </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
+                </TabItem>
+            </TabControl>
 
-        </TreeView>
-
-        <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.Items}" Grid.Column="1">
-
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Width="20" Margin="3" 
-                                           Source="{Binding Type,
-                                        Converter={x:Static local:HeaderToImageConverter.Instance}
-                                        }"/>
-                        <TextBlock Text="{Binding Name}" />
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-
-        </TreeView>
-
-    </Grid>
+        </Grid>
+    </DockPanel>
 </Window>

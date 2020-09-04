@@ -12,11 +12,10 @@ namespace Q1
     public class DirectoryItem
     {
         #region Public properties
-
         /// <summary>
-        /// Owner of the item
+        /// Id of item
         /// </summary>
-        public User Owner { get; set; }
+        public int DirectoryItemId { get; set; }
 
         /// <summary>
         /// Additional Description of the item
@@ -37,6 +36,8 @@ namespace Q1
         /// </summary>
         public string Name { get { return DirectoryStructure.GetFileFolderName(this.FullPath); } }
 
+        public IList<UserDirectoryItem> UserDirectoryItems { get; set; }
+        
         #endregion
 
     }

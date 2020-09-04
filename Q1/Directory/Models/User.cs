@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace Q1
     {
         #region Public properties
 
-        public string Id { get; set; }
+        public int UserId { get; set; }
 
         public string Name { get; set; }
 
@@ -18,19 +19,17 @@ namespace Q1
 
         public string Phone { get; set; }
 
-        public List<DirectoryItem> OwnedItems { get; set; }
 
+        public IList<UserDirectoryItem> userDirectoryItems { get; set; }
+    
 
         #endregion
 
         #region Constructor
 
-        public User(string id, string name, string email, string phone)
+        public User(string name)
         {
-            this.Id = id;
             this.Name = name;
-            this.Email = email;
-            this.Phone = phone;
         }
 
         #endregion
