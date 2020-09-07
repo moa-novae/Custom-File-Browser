@@ -75,53 +75,55 @@
 
             </TreeView>
 
-            <TabControl Grid.Column="1">
-                <TabItem Header="Files">
-                    <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.Items}">
-                        
-                        <!--Bind selected treeview item to FileBrowser view model-->
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectedItemChanged">
-                                <i:InvokeCommandAction Command="{Binding FileBrowser.SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=FolderView, Path=SelectedItem}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}">
-                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                            </Style>
-                        </TreeView.ItemContainerStyle>
 
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Width="20" Margin="3" 
+            <StackPanel Orientation="Vertical"  Grid.Column="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width ="*"/>
+                        <ColumnDefinition Width ="Auto"/>
+                        <ColumnDefinition Width ="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Margin="5" Grid.Column="0" Text="{Binding FileBrowser.SearchString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button Grid.Column="1" Width="50" Margin="0 0 10 0" Command="{Binding FileBrowser.SearchAllTreeNodesCommand}">
+                        Search
+                    </Button>
+                    <Button Grid.Column="2" Width="50" Command="{Binding FileBrowser.ShowAllTreeNodesCommand}">
+                        Clear
+                    </Button>
+                </Grid>
+
+
+                <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.Items}">
+
+                    <!--Bind selected treeview item to FileBrowser view model-->
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectedItemChanged">
+                            <i:InvokeCommandAction Command="{Binding FileBrowser.SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=FolderView, Path=SelectedItem}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="20" Margin="3" 
                                            Source="{Binding Item.Type,
                                         Converter={x:Static local:HeaderToImageConverter.Instance}
                                         }"/>
-                                    <TextBlock Text="{Binding Item.Name}" />
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
+                                <TextBlock Text="{Binding Item.Name}" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
 
-                    </TreeView>
-                </TabItem>
+                </TreeView>
 
-                <TabItem Header="Search">
-                    <StackPanel Orientation="Vertical">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width ="*"/>
-                                <ColumnDefinition Width ="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox Margin="5" Grid.Column="0"/>
-                            <Button Grid.Column="1">
-                                Search
-                            </Button>
-                        </Grid>
-                    </StackPanel>
-                </TabItem>
-            </TabControl>
+            </StackPanel>
+
 
         </Grid>
     </DockPanel>

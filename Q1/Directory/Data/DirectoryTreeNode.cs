@@ -14,6 +14,8 @@ namespace Q1
 
         public readonly string ID;
         public DirectoryTreeNode Parent { get; private set; }
+        public List<DirectoryTreeNode> Ancestors { get { return GetAncestors(); } }
+        public bool? IsCriteriaMatched { get; set; } = null;
 
         public DirectoryItem Item { get; private set; }
 
@@ -28,7 +30,7 @@ namespace Q1
             return _children[id];
         }
 
-        public Dictionary<string, DirectoryTreeNode> GetAllChildren ()
+        public Dictionary<string, DirectoryTreeNode> GetAllChildren()
         {
             return _children;
         }
@@ -44,6 +46,7 @@ namespace Q1
             _children.Add(item.ID, item);
         }
 
+
         public IEnumerator<DirectoryTreeNode> GetEnumerator()
         {
             return _children.Values.GetEnumerator();
@@ -54,10 +57,27 @@ namespace Q1
             return GetEnumerator();
         }
 
-       
+
         public int Count
         {
             get { return _children.Count; }
+        }
+
+        private List<DirectoryTreeNode> GetAncestors()
+        {
+            List<DirectoryTreeNode> ancestors = new List<DirectoryTreeNode>();
+
+            void AddParent(DirectoryTreeNode node)
+            {
+                if (node.Parent != null)
+                {
+                    ancestors.Add(node.Parent);
+                    AddParent(node.Parent);
+                }
+            }
+            AddParent(this);
+            return ancestors;
+
         }
     }
 }

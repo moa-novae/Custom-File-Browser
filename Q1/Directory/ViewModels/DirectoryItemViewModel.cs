@@ -14,18 +14,35 @@ namespace Q1
 
         public DirectoryTreeNode Node { get; set; }
         public DirectoryItem Item { get; set; }
-        
+
         /// <summary>
         /// name of directory item
         /// </summary>
         public string Name { get { return Item.Type == DirectoryItemType.Drive ? Item.FullPath : DirectoryStructure.GetFileFolderName(Item.FullPath); } }
 
-        
 
+        public ObservableCollection<DirectoryItemViewModel> children;
         /// <summary>
         /// A list of all children contained inside this item
         /// </summary>
-        public ObservableCollection<DirectoryItemViewModel> Children { get; set; }
+        public ObservableCollection<DirectoryItemViewModel> Children
+        {
+            get
+            {
+                return children;
+            }
+            set
+            {
+                if (children == null)
+                    children = new ObservableCollection<DirectoryItemViewModel>();
+                children.Clear();
+                foreach (var child in value)
+                {
+                    children.Add(child);
+                }
+            }
+        }
+
 
         // Files cannot be expanded
         /// <summary>
@@ -33,11 +50,12 @@ namespace Q1
         /// </summary>
         public bool CanExpand { get { return Item.Type != DirectoryItemType.File; } }
 
+        
         public bool IsExpanded
         {
             get
             {
-                return Children?.Count(f => f != null) > 0;
+               return Children?.Count(f => f != null) > 0;
             }
             set
             {
@@ -54,7 +72,7 @@ namespace Q1
 
         #endregion
 
-      
+
         #region Constructor
         /// <summary>
         /// Default constructor
@@ -65,11 +83,18 @@ namespace Q1
         {
             // Set the directoryItem this view model represents
             Item = node.Item;
-
+            
             // Set Node for easier access 
             Node = node;
-            // setup the children as needed
-            ClearChildren();
+            // only setup children when set IsExpanded to true
+            if (IsExpanded == true)
+            {
+                Expand();
+            }
+            else
+            {
+                ClearChildren();
+            }
 
         }
 
@@ -87,7 +112,14 @@ namespace Q1
 
             // Show the expand arrow if we are not a file
             if (Item.Type != DirectoryItemType.File)
+            {
                 Children.Add(null);
+                if (Item.Name == "g")
+                {
+
+                }
+            }
+
         }
 
         #endregion
@@ -100,10 +132,10 @@ namespace Q1
             if (Item.Type == DirectoryItemType.File)
                 return;
             //When expand, find all children
-            
+
             Dictionary<string, DirectoryTreeNode> childrenNodes = Node.GetAllChildren();
             Children = new ObservableCollection<DirectoryItemViewModel>(
-                childrenNodes.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
+                childrenNodes.Values.Where(child => child.IsCriteriaMatched != false).Select(childNode => new DirectoryItemViewModel(childNode)));
         }
     }
 }
