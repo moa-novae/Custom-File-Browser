@@ -14,20 +14,20 @@
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar ToolBarTray.IsLocked="True" >
 
-                <Button ToolTip="View User" >
+                <Button ToolTip="View User" Command="{Binding UserBrowser.OpenViewUserWindowCommand}">
                     <Image Source="./images/view-user.png"/>
                 </Button>
-                <Button ToolTip="Add New User" Command="{Binding CreateNewUserWindowCommand}">
+                <Button ToolTip="Add New User" Command="{Binding UserBrowser.OpenNewUserWindowCommand}">
                     <Image Source="./Images/add-user.png"/>
                 </Button>
-                <Button ToolTip="Edit User">
+                <Button ToolTip="Edit User" Command="{Binding UserBrowser.OpenEditUserWindowCommand}">
                     <Image Source="./Images/edit-user.png"/>
                 </Button>
-                <Button ToolTip="Delete User">
+                <Button ToolTip="Delete User" Command="{Binding UserBrowser.DeleteUserCommand}">
                     <Image Source="./Images/delete-user.png"/>
                 </Button>
                 <Separator/>
-                <Button ToolTip="Directory Item Properties">
+                <Button ToolTip="Directory Item Properties" Command="{Binding FileBrowser.OpenEditDirectoryItemWindowCommand}">
                     <Image Source="./Images/edit.png"/>
                 </Button>
 
@@ -41,14 +41,51 @@
                 <ColumnDefinition Width="2*"/>
 
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding UserBrowser.AllUsers}">
-                
-            </TextBlock>
+            <TreeView x:Name="UserView" ItemsSource="{Binding UserBrowser.AllUsers}">
+
+                <!--Bind selected treeview item to UserBrowser view model-->
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding UserBrowser.SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=UserView, Path=SelectedItem}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type local:User}" ItemsSource="{Binding UserDirectoryItems}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                    <DataTemplate DataType="{x:Type local:DirectoryItem}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="20" Margin="3" 
+                                           Source="{Binding Type,
+                                        Converter={x:Static local:HeaderToImageConverter.Instance}
+                                        }"/>
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TreeView.Resources>
+
+            </TreeView>
 
             <TabControl Grid.Column="1">
                 <TabItem Header="Files">
-                    <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.Items}" >
-
+                    <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.Items}">
+                        
+                        <!--Bind selected treeview item to FileBrowser view model-->
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectedItemChanged">
+                                <i:InvokeCommandAction Command="{Binding FileBrowser.SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=FolderView, Path=SelectedItem}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -59,10 +96,10 @@
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Width="20" Margin="3" 
-                                           Source="{Binding Type,
+                                           Source="{Binding Item.Type,
                                         Converter={x:Static local:HeaderToImageConverter.Instance}
                                         }"/>
-                                    <TextBlock Text="{Binding Name}" />
+                                    <TextBlock Text="{Binding Item.Name}" />
                                 </StackPanel>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>

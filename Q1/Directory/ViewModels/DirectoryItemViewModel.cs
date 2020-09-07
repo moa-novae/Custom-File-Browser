@@ -13,16 +13,14 @@ namespace Q1
         #region public properties
 
         public DirectoryTreeNode Node { get; set; }
-        public DirectoryItemType Type { get; set; }
-        /// <summary>
-        /// full path of item
-        /// </summary>
-
-        public string FullPath { get; set; }
+        public DirectoryItem Item { get; set; }
+        
         /// <summary>
         /// name of directory item
         /// </summary>
-        public string Name { get { return this.Type == DirectoryItemType.Drive ? this.FullPath : DirectoryStructure.GetFileFolderName(this.FullPath); } }
+        public string Name { get { return Item.Type == DirectoryItemType.Drive ? Item.FullPath : DirectoryStructure.GetFileFolderName(Item.FullPath); } }
+
+        
 
         /// <summary>
         /// A list of all children contained inside this item
@@ -33,13 +31,13 @@ namespace Q1
         /// <summary>
         /// indicates if item can be expanded
         /// </summary>
-        public bool CanExpand { get { return this.Type != DirectoryItemType.File; } }
+        public bool CanExpand { get { return Item.Type != DirectoryItemType.File; } }
 
         public bool IsExpanded
         {
             get
             {
-                return this.Children?.Count(f => f != null) > 0;
+                return Children?.Count(f => f != null) > 0;
             }
             set
             {
@@ -49,7 +47,7 @@ namespace Q1
                     Expand();
                 // if the UI tells us to close
                 else
-                    this.ClearChildren();
+                    ClearChildren();
 
             }
         }
@@ -65,13 +63,13 @@ namespace Q1
         /// <param name="type">The type of item</param>
         public DirectoryItemViewModel(DirectoryTreeNode node)
         {
-            // Set path and type
-            this.FullPath = node.Item.FullPath;
-            this.Type = node.Item.Type;
-            Node = node;
+            // Set the directoryItem this view model represents
+            Item = node.Item;
 
+            // Set Node for easier access 
+            Node = node;
             // setup the children as needed
-            this.ClearChildren();
+            ClearChildren();
 
         }
 
@@ -85,11 +83,11 @@ namespace Q1
         private void ClearChildren()
         {
             // Clear items
-            this.Children = new ObservableCollection<DirectoryItemViewModel>();
+            Children = new ObservableCollection<DirectoryItemViewModel>();
 
             // Show the expand arrow if we are not a file
-            if (this.Type != DirectoryItemType.File)
-                this.Children.Add(null);
+            if (Item.Type != DirectoryItemType.File)
+                Children.Add(null);
         }
 
         #endregion
@@ -99,7 +97,7 @@ namespace Q1
         /// </summary>
         public void Expand()
         {
-            if (this.Type == DirectoryItemType.File)
+            if (Item.Type == DirectoryItemType.File)
                 return;
             //When expand, find all children
             

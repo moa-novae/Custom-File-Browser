@@ -11,6 +11,7 @@ namespace Q1
     /// </summary>
     public partial class MainWindow : Window
     {
+       
         #region Constructor
 
         /// <summary>
@@ -19,21 +20,13 @@ namespace Q1
         public MainWindow()
         {
             InitializeComponent();
-            var mainViewModel = new MainViewModel();
-            this.DataContext = mainViewModel;
             
-
-
+      
+            
         }
 
 
-
-
-
-
         #endregion
-
-       
-      
+  
     }
 }

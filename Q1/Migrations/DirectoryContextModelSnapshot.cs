@@ -84,7 +84,7 @@ namespace Q1.Migrations
                         .IsRequired();
 
                     b.HasOne("Q1.User", "User")
-                        .WithMany("userDirectoryItems")
+                        .WithMany("UserDirectoryItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

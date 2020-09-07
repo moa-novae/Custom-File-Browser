@@ -17,12 +17,19 @@ namespace Q1
     /// <summary>
     /// Interaction logic for AddUserView.xaml
     /// </summary>
-    public partial class AddUserView : Window
+    public partial class UserFormView : Window
     {
-        public AddUserView()
+        // Constructor for creating brand new user
+        public UserFormView(UserServices userServices)
         {
             InitializeComponent();
-            this.DataContext = new NewUserViewModel();
+            DataContext = new NewUserViewModel(userServices);
+        }
+        //constructor for editing selected user
+        public UserFormView(UserServices userServices, User selectedUser)
+        {
+            InitializeComponent();
+            DataContext = new NewUserViewModel(userServices, selectedUser);
         }
     }
 }

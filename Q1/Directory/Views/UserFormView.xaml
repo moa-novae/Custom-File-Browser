@@ -1,11 +1,10 @@
-﻿<Window x:Class="Q1.AddUserView"
+﻿<Window x:Class="Q1.UserFormView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Q1"
         mc:Ignorable="d"
-        Title="AddUserView" 
+        Title="UserFormView" 
         ResizeMode="CanMinimize" Height="450" Width="400">
     <DockPanel>
         
@@ -38,7 +37,9 @@
                     Cancle
                 </TextBlock>
             </Button>
-            <Button Width="50" Margin="5 5 5 5" Command="{Binding CreateNewUserCommand}">
+            <Button Width="50" Margin="5 5 5 5" Command="{Binding CreateNewUserCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
+                           AncestorType={x:Type Window}}}">
                 <TextBlock>Save</TextBlock>
             </Button>
         </StackPanel>

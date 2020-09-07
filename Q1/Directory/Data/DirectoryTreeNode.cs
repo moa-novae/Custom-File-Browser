@@ -19,18 +19,18 @@ namespace Q1
 
         public DirectoryTreeNode(string id, DirectoryItem item)
         {
-            this.ID = id;
-            this.Item = item;
+            ID = id;
+            Item = item;
         }
 
         public DirectoryTreeNode GetChild(string id)
         {
-            return this._children[id];
+            return _children[id];
         }
 
         public Dictionary<string, DirectoryTreeNode> GetAllChildren ()
         {
-            return this._children;
+            return _children;
         }
 
         public void Add(DirectoryTreeNode item)
@@ -41,23 +41,23 @@ namespace Q1
             }
 
             item.Parent = this;
-            this._children.Add(item.ID, item);
+            _children.Add(item.ID, item);
         }
 
         public IEnumerator<DirectoryTreeNode> GetEnumerator()
         {
-            return this._children.Values.GetEnumerator();
+            return _children.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
        
         public int Count
         {
-            get { return this._children.Count; }
+            get { return _children.Count; }
         }
     }
 }

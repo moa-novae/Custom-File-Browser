@@ -9,8 +9,8 @@ using Q1;
 namespace Q1.Migrations
 {
     [DbContext(typeof(DirectoryContext))]
-    [Migration("20200904211132_Initial")]
-    partial class Initial
+    [Migration("20200905002233_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,7 +86,7 @@ namespace Q1.Migrations
                         .IsRequired();
 
                     b.HasOne("Q1.User", "User")
-                        .WithMany("userDirectoryItems")
+                        .WithMany("UserDirectoryItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

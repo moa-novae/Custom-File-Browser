@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Input;
+using Q1.State;
 
 namespace Q1
 {
@@ -15,43 +18,26 @@ namespace Q1
         /// </summary>
         public DirectoryStructureViewModel FileBrowser { get; set; }
         public UserViewModel UserBrowser { get; set; }
+        public UserServices UserServices { get; set; }
         
-        public RelayCommand CreateNewUserWindowCommand { get; private set; }
-        public RelayCommand CreateEditUserWindowCommand { get; private set; }
+       
+        public RelayCommand CreateEditItemWindowCommand { get; private set; }
+        
 
+       
         #endregion
 
         #region Constructor
-        public MainViewModel ()
+        public MainViewModel (UserServices userServices, UsersStore userStore)
         {
-            this.FileBrowser = new DirectoryStructureViewModel();
-            this.UserBrowser = new UserViewModel();
-            CreateNewUserWindowCommand = new RelayCommand(CreateNewUserWindow, CanCreateNewUserWindow);
+            UserServices = userServices;
+            FileBrowser = new DirectoryStructureViewModel();
+            UserBrowser = new UserViewModel(userServices, userStore);
+           
             
         }
 
         #endregion
-        
-
-
-      
-
-
-        public void CreateNewUserWindow(object message)
-        {
-            AddUserView view = new AddUserView();
-            view.Show();
-        }
-
-        public void CreateEditUserWindow(object message)
-        {
-            
-        }
-
-        public bool CanCreateNewUserWindow(object message)
-        {
-            return true;
-        }
 
         
     }

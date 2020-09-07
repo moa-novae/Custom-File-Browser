@@ -20,8 +20,9 @@ namespace Q1
         public string Phone { get; set; }
 
 
-        public IList<UserDirectoryItem> userDirectoryItems { get; set; }
-    
+        public IList<UserDirectoryItem> UserDirectoryItems { get; set; } 
+      
+
 
         #endregion
 
@@ -29,7 +30,7 @@ namespace Q1
 
         public User(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         #endregion

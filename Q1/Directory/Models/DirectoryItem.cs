@@ -34,7 +34,7 @@ namespace Q1
         /// <summary>
         /// File name or folder name
         /// </summary>
-        public string Name { get { return DirectoryStructure.GetFileFolderName(this.FullPath); } }
+        public string Name { get { return DirectoryStructure.GetFileFolderName(FullPath); } }
 
         public IList<UserDirectoryItem> UserDirectoryItems { get; set; }
         

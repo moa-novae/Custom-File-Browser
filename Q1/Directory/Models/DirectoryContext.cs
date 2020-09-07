@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Q1
 {
-    class DirectoryContext : DbContext
+    public class DirectoryContext : DbContext
     {
 
         public DbSet<DirectoryItem> DirectoryItems { get; set; }
