@@ -1,50 +1,49 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
+using Q1.State;
 
 namespace Q1
-{ 
+{
     /// <summary>
     /// The view model for the application main Directory view
     /// </summary>
     public class DirectoryStructureViewModel : BaseViewModel
     {
-        private ObservableCollection<DirectoryItemViewModel> items = new ObservableCollection<DirectoryItemViewModel>();
+        private ObservableCollection<DirectoryItemViewModel> childViewModels = new ObservableCollection<DirectoryItemViewModel>();
         #region public properties
         /// <summary>
         /// A list of all directories on the machine
         /// </summary>
-        public ObservableCollection<DirectoryItemViewModel> Items {
+        public ObservableCollection<DirectoryItemViewModel> ChildViewModels
+        {
             get
             {
-                return items;
+                return childViewModels;
             }
             set
             {
-                items.Clear();
+                childViewModels.Clear();
                 foreach (var child in value)
                 {
-                    items.Add(child);
+                    childViewModels.Add(child);
                 }
             }
         }
 
+        #endregion
+
         public DirectoryItem SelectedDirectoryItem { get; set; }
-        private DirectoryTree directoryTree { get; set; }
+        private DirectoryItemState directoryTreeState { get; set; }
+        private UserState userState { get; set; }
+        private DirectoryItemServices directoryItemServices { get; set; }
         public string SearchString { get; set; } = "";
-       
+
+        #region Public commands
+
         public RelayCommand SelectedItemChangedCommand { get; private set; }
         public RelayCommand OpenEditDirectoryItemWindowCommand { get; private set; }
         public RelayCommand ShowAllTreeNodesCommand { get; private set; }
         public RelayCommand SearchAllTreeNodesCommand { get; private set; }
-        private void SelectedItemChanged(object args)
-        {
-            var selectedDirectoryItemViewModel = (DirectoryItemViewModel)args;
-            if (selectedDirectoryItemViewModel != null)
-                SelectedDirectoryItem = (DirectoryItem)selectedDirectoryItemViewModel.Item;
-        }
-
 
         #endregion
 
@@ -53,13 +52,16 @@ namespace Q1
         /// <summary>
         /// Default constructor
         /// </summary>
-        public DirectoryStructureViewModel()
+        public DirectoryStructureViewModel(DirectoryItemServices dirServ, DirectoryItemState dirState, UserState us)
         {
-            DirectoryTree tree = new DirectoryTree(@"C:\WpfTest");
-            directoryTree = tree;
-            Dictionary<string, DirectoryTreeNode> rootChildren = tree.RootNode.GetAllChildren();
-            Items = new ObservableCollection<DirectoryItemViewModel>(
-                rootChildren.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
+            // directoryTreeState contains an instance of current directory tree
+            directoryTreeState = dirState;
+            directoryItemServices = dirServ;
+            userState = us;
+
+            // Generate sub view models for each of the root items in the root folder. Each root item in the root folder is the root of its own tree
+            ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(
+                directoryTreeState.RootChildren.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
 
             // set RelayCommands
             SelectedItemChangedCommand = new RelayCommand(args => SelectedItemChanged(args));
@@ -68,13 +70,16 @@ namespace Q1
             SearchAllTreeNodesCommand = new RelayCommand(FilterForEligibleTreeNodes, IsSearchStringNotEmpty);
         }
         #endregion
+
+        #region Methods for commands
+
         /// <summary>
         /// Open new windows allowing user to view and edit directory item properties
         /// </summary>
         /// <param name="message"></param>
         public void OpenEditDirectoryItemWindow(object message)
         {
-            EditDirectoryItemView view = new EditDirectoryItemView();
+            EditDirectoryItemView view = new EditDirectoryItemView(directoryItemServices, directoryTreeState, SelectedDirectoryItem, userState);
             view.Show();
         }
 
@@ -82,22 +87,40 @@ namespace Q1
         {
             return SelectedDirectoryItem != null ? true : false;
         }
+        private void SelectedItemChanged(object args)
+        {
+            var selectedDirectoryItemViewModel = (DirectoryItemViewModel)args;
+            if (selectedDirectoryItemViewModel != null)
+                SelectedDirectoryItem = selectedDirectoryItemViewModel.Item;
+        }
+
+        #endregion
+
+        #region Methods for searching directory items
 
         public void FilterForEligibleTreeNodes(object message)
         {
-            directoryTree.SetAllDirectoryTreeNodeEligibility(SearchString);
+            directoryTreeState.Tree.SetAllDirectoryTreeNodeEligibility(SearchString);
             var ItemsThatMatchCriteria = new ObservableCollection<DirectoryItemViewModel>();
             // only show first level item that meets criteria
-            foreach (var item in Items)
+            foreach (var item in ChildViewModels)
             {
                 if (item.Node.IsCriteriaMatched != false)
                     ItemsThatMatchCriteria.Add(item);
             }
-            void ExpandFoldersContainingSearchedItems (DirectoryItemViewModel viewModel)
+            void ExpandFoldersContainingSearchedItems(DirectoryItemViewModel viewModel)
             {
                 if (viewModel.Node.IsCriteriaMatched == true)
+                {
+                    // Find current tree node's children that passed the filtering
+                    var eligibleChildTreeNodes = viewModel.Node.GetAllChildren().Values.Where(child => child.IsCriteriaMatched != false);
+                    // Generate new children view models from these nodes
+                    var childViewModels = new ObservableCollection<DirectoryItemViewModel>(eligibleChildTreeNodes.Select(childNode => new DirectoryItemViewModel(childNode)));
+                    // clear old child view models, and add new children that are eligible to each parent view model
+                    viewModel.Children = childViewModels;
                     viewModel.IsExpanded = true;
-                foreach(var childViewModel in viewModel.Children)
+                }
+                foreach (var childViewModel in viewModel.Children)
                 {
                     ExpandFoldersContainingSearchedItems(childViewModel);
                 }
@@ -105,19 +128,18 @@ namespace Q1
             foreach (var item in ItemsThatMatchCriteria)
             {
                 ExpandFoldersContainingSearchedItems(item);
-            }    
+            }
 
-            Items = new ObservableCollection<DirectoryItemViewModel> (ItemsThatMatchCriteria);
+            ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(ItemsThatMatchCriteria);
         }
-        
-        
+
+
         public void ClearSearchCriteria(object message)
         {
-            directoryTree.SetAllDirectoryTreeNodeEligibleNull();
+            directoryTreeState.Tree.SetAllDirectoryTreeNodeEligibleNull();
             SearchString = "";
-            Dictionary<string, DirectoryTreeNode> rootChildren = directoryTree.RootNode.GetAllChildren();
-            Items = new ObservableCollection<DirectoryItemViewModel>(
-                rootChildren.Values.Select(childNode => new DirectoryItemViewModel(childNode) { IsExpanded = false })); 
+            ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(
+                directoryTreeState.RootChildren.Values.Select(childNode => new DirectoryItemViewModel(childNode) { IsExpanded = false }));
         }
 
         public bool IsSearchStringNotEmpty(object message)
@@ -125,6 +147,7 @@ namespace Q1
             return SearchString != "";
         }
 
-        
+        #endregion
+
     }
 }

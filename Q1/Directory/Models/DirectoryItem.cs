@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Q1
 {
@@ -31,13 +28,19 @@ namespace Q1
         /// </summary>
         public string FullPath { get; set; }
 
+        public DirectoryItem(string fullPath, DirectoryItemType type)
+        {
+            FullPath = fullPath;
+            Type = type;
+        }
+
         /// <summary>
         /// File name or folder name
         /// </summary>
         public string Name { get { return DirectoryStructure.GetFileFolderName(FullPath); } }
 
-        public IList<UserDirectoryItem> UserDirectoryItems { get; set; }
-        
+        public List<UserDirectoryItem> UserDirectoryItems { get; set; }
+
         #endregion
 
     }

@@ -1,9 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using Microsoft.EntityFrameworkCore;
 using Q1.State;
 using Q1.Views;
 
@@ -18,9 +13,9 @@ namespace Q1
         /// <summary>
         /// A list of all directories on the machine
         /// </summary>
-        public ObservableCollection<User> AllUsers { get { return usersStore.CurrentUsers; } }
+        public ObservableCollection<User> AllUsers { get { return userState.CurrentUsers; } }
         public User SelectedUser { get; set; }
-        private UsersStore usersStore { get; set; }
+        private UserState userState { get; set; }
         private UserServices userServices { get; set; }
         public RelayCommand DeleteUserCommand { get; set; }
         public RelayCommand SelectedItemChangedCommand { get; set; }
@@ -34,9 +29,9 @@ namespace Q1
         /// <summary>
         /// Default constructor
         /// </summary>
-        public UserViewModel(UserServices uServe, UsersStore uStore)
+        public UserViewModel(UserServices uServe, UserState uStore)
         {
-            usersStore = uStore;
+            userState = uStore;
             userServices = uServe;
             SelectedItemChangedCommand = new RelayCommand(args => SelectedItemChanged(args));
             DeleteUserCommand = new RelayCommand(DeleteUser, IsAnUserSelected);

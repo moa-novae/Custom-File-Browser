@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
-//https://stackoverflow.com/questions/9860207/build-a-simple-high-performance-tree-data-structure-in-c-sharp
 namespace Q1
 {
     public class DirectoryTreeNode : IEnumerable<DirectoryTreeNode>
@@ -17,7 +13,7 @@ namespace Q1
         public List<DirectoryTreeNode> Ancestors { get { return GetAncestors(); } }
         public bool? IsCriteriaMatched { get; set; } = null;
 
-        public DirectoryItem Item { get; private set; }
+        public DirectoryItem Item { get; set; }
 
         public DirectoryTreeNode(string id, DirectoryItem item)
         {
@@ -27,7 +23,14 @@ namespace Q1
 
         public DirectoryTreeNode GetChild(string id)
         {
-            return _children[id];
+            if (_children.ContainsKey(id))
+            {
+                return _children[id];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public Dictionary<string, DirectoryTreeNode> GetAllChildren()
@@ -43,7 +46,7 @@ namespace Q1
             }
 
             item.Parent = this;
-            _children.Add(item.ID, item);
+            _children.Add($"{ item.ID}", item);
         }
 
 

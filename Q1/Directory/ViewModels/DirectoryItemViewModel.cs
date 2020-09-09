@@ -1,7 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Collections.Generic;
-using System.Windows.Input;
 
 namespace Q1
 {
@@ -50,12 +49,12 @@ namespace Q1
         /// </summary>
         public bool CanExpand { get { return Item.Type != DirectoryItemType.File; } }
 
-        
+
         public bool IsExpanded
         {
             get
             {
-               return Children?.Count(f => f != null) > 0;
+                return Children?.Count(f => f != null) > 0;
             }
             set
             {
@@ -83,7 +82,7 @@ namespace Q1
         {
             // Set the directoryItem this view model represents
             Item = node.Item;
-            
+
             // Set Node for easier access 
             Node = node;
             // only setup children when set IsExpanded to true
@@ -114,10 +113,7 @@ namespace Q1
             if (Item.Type != DirectoryItemType.File)
             {
                 Children.Add(null);
-                if (Item.Name == "g")
-                {
 
-                }
             }
 
         }

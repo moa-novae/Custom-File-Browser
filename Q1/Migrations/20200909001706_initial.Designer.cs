@@ -9,8 +9,8 @@ using Q1;
 namespace Q1.Migrations
 {
     [DbContext(typeof(DirectoryContext))]
-    [Migration("20200905002233_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200909001706_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Q1.State;
+﻿using Q1.State;
 
 namespace Q1
 {
@@ -19,26 +11,24 @@ namespace Q1
         public DirectoryStructureViewModel FileBrowser { get; set; }
         public UserViewModel UserBrowser { get; set; }
         public UserServices UserServices { get; set; }
-        
-       
-        public RelayCommand CreateEditItemWindowCommand { get; private set; }
-        
 
-       
+
+        public RelayCommand CreateEditItemWindowCommand { get; private set; }
+
+
+
         #endregion
 
         #region Constructor
-        public MainViewModel (UserServices userServices, UsersStore userStore)
+        public MainViewModel(UserServices userServices, UserState userState, DirectoryItemServices directoryItemServices, DirectoryItemState directoryItemsState)
         {
             UserServices = userServices;
-            FileBrowser = new DirectoryStructureViewModel();
-            UserBrowser = new UserViewModel(userServices, userStore);
-           
-            
+            FileBrowser = new DirectoryStructureViewModel(directoryItemServices, directoryItemsState, userState);
+            UserBrowser = new UserViewModel(userServices, userState);
         }
 
         #endregion
 
-        
+
     }
 }

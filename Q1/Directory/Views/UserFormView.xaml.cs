@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace Q1
 {
@@ -23,13 +11,13 @@ namespace Q1
         public UserFormView(UserServices userServices)
         {
             InitializeComponent();
-            DataContext = new NewUserViewModel(userServices);
+            DataContext = new UserFormViewModel(userServices);
         }
         //constructor for editing selected user
         public UserFormView(UserServices userServices, User selectedUser)
         {
             InitializeComponent();
-            DataContext = new NewUserViewModel(userServices, selectedUser);
+            DataContext = new UserFormViewModel(userServices, selectedUser);
         }
     }
 }

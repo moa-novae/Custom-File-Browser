@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Q1.State;
@@ -24,19 +19,24 @@ namespace Q1
             window.Show();
 
         }
-
+        // The dependency injection probably could've done in a better way
+        // Needs more work
         private IServiceProvider CreateServiceProvider()
         {
             IServiceCollection services = new ServiceCollection();
 
-            services.AddSingleton<UserServices>();
-            services.AddSingleton<UsersStore>();
+            services.AddScoped<UserServices>();
+            services.AddSingleton<UserState>();
+
+            services.AddScoped<DirectoryItemServices>();
+            services.AddSingleton<DirectoryItemState>(state =>
+            new DirectoryItemState(@"C:\WpfTest"));
             services.AddScoped<MainViewModel>();
 
             return services.BuildServiceProvider();
         }
 
 
-        
+
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 
 namespace Q1
 {
@@ -11,7 +7,7 @@ namespace Q1
     /// </summary>
     public partial class MainWindow : Window
     {
-       
+
         #region Constructor
 
         /// <summary>
@@ -20,13 +16,13 @@ namespace Q1
         public MainWindow()
         {
             InitializeComponent();
-            
-      
-            
+
+
+
         }
 
 
         #endregion
-  
+
     }
 }

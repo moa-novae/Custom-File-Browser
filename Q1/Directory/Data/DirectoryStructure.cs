@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 
 
 namespace Q1
@@ -30,7 +27,7 @@ namespace Q1
             {
                 var dirs = Directory.GetDirectories(fullPath);
                 if (dirs.Length > 0)
-                    items.AddRange(dirs.Select(dir => new DirectoryItem { FullPath = dir, Type = DirectoryItemType.Folder }));
+                    items.AddRange(dirs.Select(dir => new DirectoryItem(dir, DirectoryItemType.Folder)));
             }
             catch { }
 
@@ -44,13 +41,13 @@ namespace Q1
             {
                 var fs = Directory.GetFiles(fullPath);
                 if (fs.Length > 0)
-                    items.AddRange(fs.Select(file => new DirectoryItem { FullPath = file, Type = DirectoryItemType.File }));
+                    items.AddRange(fs.Select(file => new DirectoryItem(file, DirectoryItemType.File)));
             }
             catch { }
             return items;
 
 
-            }
+        }
         #endregion
 
         #region Helpers

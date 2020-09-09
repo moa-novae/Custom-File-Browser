@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Q1
 {
-    public class NewUserViewModel : BaseViewModel
+    public class UserFormViewModel : BaseViewModel
     {
         private UserServices userServices { get; set; }
         public RelayCommand CreateNewUserCommand { get; private set; }
@@ -25,7 +21,7 @@ namespace Q1
         /// Constructor for creating new users
         /// </summary>
         /// <param name="us"></param>
-        public NewUserViewModel(UserServices us)
+        public UserFormViewModel(UserServices us)
         {
             userServices = us;
             CreateNewUserCommand = new RelayCommand(CreateNewUser, CanCreateNewUser);
@@ -37,7 +33,7 @@ namespace Q1
         /// </summary>
         /// <param name="us"></param>
         /// <param name="user"></param>
-        public NewUserViewModel(UserServices us, User user)
+        public UserFormViewModel(UserServices us, User user)
             : this(us)
         {
             Name = user.Name;
@@ -68,7 +64,7 @@ namespace Q1
                 User editedUser = new User(Name) { UserId = (int)UserId, Email = Email, Phone = Phone };
                 userServices.Update(editedUser);
             }
-            
+
             CloseWindow(message);
 
         }

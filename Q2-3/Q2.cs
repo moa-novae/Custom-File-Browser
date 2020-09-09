@@ -13,7 +13,7 @@ namespace TechAssessment
 {
     class Q2
     {
-        public static double FindAngleBetweenClockHands (int hour, int min)
+        public static double FindAngleBetweenClockHands(int hour, int min)
         {
             // handle invalid hour or min parameters
             if (hour > 24 || hour < 0)

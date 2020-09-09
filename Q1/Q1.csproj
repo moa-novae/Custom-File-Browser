@@ -197,21 +197,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Directory\Data\ManyToMany.cs" />
+    <Compile Include="Directory\Models\DirectoryItemServices.cs" />
     <Compile Include="Directory\Models\UserServices.cs" />
-    <Compile Include="Directory\State\DirectoryState.cs" />
-    <Compile Include="Directory\State\UsersStore.cs" />
-    <Compile Include="Directory\ViewModels\NewUserViewModel.cs" />
+    <Compile Include="Directory\State\DirectoryItemState.cs" />
+    <Compile Include="Directory\State\UserState.cs" />
+    <Compile Include="Directory\ViewModels\EditDirectoryItemViewModel.cs" />
+    <Compile Include="Directory\ViewModels\UserFormViewModel.cs" />
     <Compile Include="Directory\Views\EditDirectoryItemView.xaml.cs">
       <DependentUpon>EditDirectoryItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Directory\Views\ViewUserView.xaml.cs">
       <DependentUpon>ViewUserView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\20200905002233_InitialCreate.cs" />
-    <Compile Include="Migrations\20200905002233_InitialCreate.designer.cs">
-      <DependentUpon>20200905002233_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\DirectoryContextModelSnapshot.cs" />
     <Compile Include="Directory\Views\UserFormView.xaml.cs">
       <DependentUpon>UserFormView.xaml</DependentUpon>
     </Compile>
@@ -241,6 +239,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Migrations\20200909001706_initial.cs" />
+    <Compile Include="Migrations\20200909001706_initial.designer.cs">
+      <DependentUpon>20200909001706_initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\DirectoryContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -9,8 +8,8 @@ namespace Q1
     /// <summary>
     /// Converts a full path to a specific image type of a drive, folder or file
     /// </summary>
-    
-    [ValueConversion(typeof (string), typeof(BitmapImage))]
+
+    [ValueConversion(typeof(string), typeof(BitmapImage))]
     class HeaderToImageConverter : IValueConverter
     {
         public static HeaderToImageConverter Instance = new HeaderToImageConverter();

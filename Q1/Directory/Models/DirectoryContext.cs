@@ -17,7 +17,18 @@ namespace Q1
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserDirectoryItem>().HasKey(sc => new { sc.UserId, sc.DirectoryItemId });
+            modelBuilder.Entity<UserDirectoryItem>()
+                .HasKey(ud => new { ud.UserId, ud.DirectoryItemId });
+            modelBuilder.Entity<UserDirectoryItem>()
+                .HasOne(ud => ud.User)
+                .WithMany(d => d.UserDirectoryItems)
+                .HasForeignKey(ud => ud.UserId);
+            modelBuilder.Entity<UserDirectoryItem>()
+                .HasOne(ud => ud.DirectoryItem)
+                .WithMany(u => u.UserDirectoryItems)
+                .HasForeignKey(ud => ud.DirectoryItemId);
+            base.OnModelCreating(modelBuilder);
+
         }
 
     }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Q1
 {
@@ -11,16 +9,14 @@ namespace Q1
     {
         public DirectoryTreeNode RootNode { get; private set; }
         public List<DirectoryTreeNode> FlattenedTreeList { get { return Flatten(RootNode).ToList(); } }
+        public Dictionary<string, DirectoryTreeNode> FlattenedTreeDictionary { get { return Flatten(RootNode).ToDictionary(n => n.Item.FullPath, n => n); } }
         #region Constructor
 
         public DirectoryTree(string startingDir)
         {
-            DirectoryItem rootItem = new DirectoryItem
-            {
-                FullPath = startingDir,
-                Type = DirectoryItemType.Folder
-            };
-            RootNode = new DirectoryTreeNode("root", rootItem);
+            DirectoryItem rootItem = new DirectoryItem(startingDir, DirectoryItemType.Folder);
+
+            RootNode = new DirectoryTreeNode(rootItem.FullPath, rootItem);
             AddChildrenToTree(RootNode);
         }
 
@@ -33,8 +29,8 @@ namespace Q1
         {
             yield return node;
             if (node.GetAllChildren().Count() == 0)
-                yield break; 
-            foreach(var child in node.GetAllChildren().Values)
+                yield break;
+            foreach (var child in node.GetAllChildren().Values)
             {
                 foreach (var flattenedNode in Flatten(child))
                 {
@@ -42,8 +38,8 @@ namespace Q1
                 }
             }
         }
-   
-        private static void AddChildrenToTree (DirectoryTreeNode node)
+
+        private static void AddChildrenToTree(DirectoryTreeNode node)
         {
 
             List<DirectoryItem> childItems = null;
@@ -51,7 +47,7 @@ namespace Q1
             if (node.Item.Type == DirectoryItemType.Folder)
                 childItems = DirectoryStructure.GetDirectoryContents(node.Item.FullPath);
             if (childItems != null)
-                childNodes = childItems.Select(item => new DirectoryTreeNode(item.FullPath, item))
+                childNodes = childItems.Select(item => new DirectoryTreeNode(new DirectoryInfo(item.FullPath).FullName, item))
                                        .ToList();
             if (childNodes != null)
                 foreach (DirectoryTreeNode childNode in childNodes)
@@ -61,12 +57,12 @@ namespace Q1
                 }
         }
 
-        
 
-        public void SetAllDirectoryTreeNodeEligibility (string searchString)
+
+        public void SetAllDirectoryTreeNodeEligibility(string searchString)
         {
             // loop over the tree
-            foreach(DirectoryTreeNode node in FlattenedTreeList)
+            foreach (DirectoryTreeNode node in FlattenedTreeList)
             {
                 // check if searchString is substring of full path in case insensitive way
                 if (node.Item.Name.IndexOf(searchString, StringComparison.CurrentCultureIgnoreCase) == -1)
@@ -84,12 +80,46 @@ namespace Q1
             }
         }
 
-        public void SetAllDirectoryTreeNodeEligibleNull ()
+        public void SetAllDirectoryTreeNodeEligibleNull()
         {
-            foreach(DirectoryTreeNode node in FlattenedTreeList)
+            foreach (DirectoryTreeNode node in FlattenedTreeList)
             {
                 node.IsCriteriaMatched = null;
             }
+        }
+
+        public DirectoryTreeNode GetNode(string fullPath)
+        {
+            /* Since tree is built as nested dictionaries, with the key being the directory path and value the node,
+            * We can path from root to the required node, step by step, going down the directory path
+            * Ex: If root node is C:\, and we need c:\programfiles\RequiredNode, 
+            * we can access the required node by doing this:
+            * programfiles = rootNode.children[c:\programfiles]
+            * requiredNode = programfiles[requiredNode]
+            * 
+            * Doing this should be faster than traversing across tree and comparing all nodes
+            **/
+
+            // the bottom of the stack is the node we want to access
+            // the top of the stack is the root node
+            Stack<string> directoryPaths = new Stack<string>();
+
+            // A pointer starts from the desired path and moves up
+            DirectoryInfo directoryPointer = new DirectoryInfo(fullPath);
+            DirectoryInfo rootDirectory = new DirectoryInfo(RootNode.Item.FullPath);
+            while (directoryPointer.FullName != rootDirectory.FullName)
+            {
+                directoryPaths.Push(directoryPointer.FullName);
+                directoryPointer = directoryPointer.Parent;
+            }
+
+            DirectoryTreeNode treePointer = RootNode;
+            while (directoryPaths.Count() > 0)
+            {
+                treePointer = treePointer.GetChild(directoryPaths.Pop());
+            }
+            return treePointer;
+
         }
 
         #endregion

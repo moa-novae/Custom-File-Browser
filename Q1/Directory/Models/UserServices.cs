@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Q1.State;
 
@@ -11,19 +7,20 @@ namespace Q1
 {
     public class UserServices
     {
-        private UsersStore state { get; set; }
-        private void updateState ()
+        private UserState state { get; set; }
+        private void updateState()
         {
             state.CurrentUsers = GetAllUsers();
         }
-        public UserServices(UsersStore userStore)
+        public UserServices(UserState userState)
         {
-            state = userStore;
+            state = userState;
+            state.CurrentUsers = GetAllUsers();
         }
-        public static ObservableCollection<User> GetAllUsers()
+        public ObservableCollection<User> GetAllUsers()
         {
             using (var db = new DirectoryContext())
-            { 
+            {
                 db.Users.Load();
                 var temp = db.Users.Local.ToObservableCollection();
                 // return the copy so it persists after context is disposed

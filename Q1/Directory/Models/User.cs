@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Q1
 {
@@ -20,8 +15,8 @@ namespace Q1
         public string Phone { get; set; }
 
 
-        public IList<UserDirectoryItem> UserDirectoryItems { get; set; } 
-      
+        public List<UserDirectoryItem> UserDirectoryItems { get; set; }
+
 
 
         #endregion

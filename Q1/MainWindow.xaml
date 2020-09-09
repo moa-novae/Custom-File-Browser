@@ -93,7 +93,7 @@
                 </Grid>
 
 
-                <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.Items}">
+                <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.ChildViewModels}">
 
                     <!--Bind selected treeview item to FileBrowser view model-->
                     <i:Interaction.Triggers>

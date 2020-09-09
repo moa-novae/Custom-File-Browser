@@ -57,7 +57,7 @@ namespace Q1
         {
             return _canExecute == null ? true : _canExecute(parameter);
         }
-        
+
         /// <summary>
         /// Execute the command action
         /// </summary>
