@@ -2,6 +2,7 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Q1.State;
+using Q1.Services;
 
 namespace Q1
 {
@@ -14,7 +15,7 @@ namespace Q1
         {
             IServiceProvider serviceProvider = CreateServiceProvider();
             Window window = new MainWindow();
-            serviceProvider.GetRequiredService<UserServices>();
+            serviceProvider.GetRequiredService<UserStateServices>();
             window.DataContext = serviceProvider.GetRequiredService<MainViewModel>();
             window.Show();
 
@@ -25,10 +26,10 @@ namespace Q1
         {
             IServiceCollection services = new ServiceCollection();
 
-            services.AddScoped<UserServices>();
+            services.AddScoped<UserStateServices>();
             services.AddSingleton<UserState>();
 
-            services.AddScoped<DirectoryItemServices>();
+            services.AddScoped<DirectoryItemStateServices>();
             services.AddSingleton<DirectoryItemState>(state =>
             new DirectoryItemState(@"C:\WpfTest"));
             services.AddScoped<MainViewModel>();

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Q1"
+        xmlns:entity="clr-namespace:Q1Entity;assembly=Q1Entity"
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="450" Width="800"
@@ -57,12 +58,12 @@
                 </TreeView.ItemContainerStyle>
 
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type local:User}" ItemsSource="{Binding UserDirectoryItems}">
+                    <HierarchicalDataTemplate DataType="{x:Type entity:User}" ItemsSource="{Binding UserDirectoryItems}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type local:DirectoryItem}">
+                    <DataTemplate DataType="{x:Type entity:DirectoryItem}">
                         <StackPanel Orientation="Horizontal">
                             <Image Width="20" Margin="3" 
                                            Source="{Binding Type,

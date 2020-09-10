@@ -17,7 +17,7 @@ namespace Q1Service
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new SyncLocalDirectoryService()
             };
             ServiceBase.Run(ServicesToRun);
         }
