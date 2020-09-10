@@ -6,7 +6,7 @@ namespace Q1.State
     {
         public DirectoryTree Tree { get; set; }
 
-        public Dictionary<string, DirectoryTreeNode> RootChildren { get { return Tree.RootNode.GetAllChildren(); } }
+        public Dictionary<string, DirectoryTreeNode> RootChildren { get { return Tree.RootNode?.GetAllChildren(); } }
 
 
         public DirectoryItemState(string rootpath)

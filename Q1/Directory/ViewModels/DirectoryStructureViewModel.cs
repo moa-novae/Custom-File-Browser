@@ -60,8 +60,12 @@ namespace Q1
             userState = us;
 
             // Generate sub view models for each of the root items in the root folder. Each root item in the root folder is the root of its own tree
-            ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(
-                directoryTreeState.RootChildren.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
+            ChildViewModels = new ObservableCollection<DirectoryItemViewModel>();
+            if (directoryTreeState.RootChildren != null)
+            {
+                ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(
+                    directoryTreeState.RootChildren?.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
+            }
 
             // set RelayCommands
             SelectedItemChangedCommand = new RelayCommand(args => SelectedItemChanged(args));

@@ -76,7 +76,7 @@
             </TreeView>
 
 
-            <StackPanel Orientation="Vertical"  Grid.Column="1">
+            <StackPanel Orientation="Vertical"  Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width ="*"/>

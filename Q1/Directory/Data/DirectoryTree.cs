@@ -9,15 +9,27 @@ namespace Q1
     {
         public DirectoryTreeNode RootNode { get; private set; }
         public List<DirectoryTreeNode> FlattenedTreeList { get { return Flatten(RootNode).ToList(); } }
-        public Dictionary<string, DirectoryTreeNode> FlattenedTreeDictionary { get { return Flatten(RootNode).ToDictionary(n => n.Item.FullPath, n => n); } }
+        public Dictionary<string, DirectoryTreeNode> FlattenedTreeDictionary
+        {
+            get
+            {
+                var flattenedTreeNodes = Flatten(RootNode);
+                // check if enumerable is not emtpy or null
+                if (flattenedTreeNodes.Any())
+                    return flattenedTreeNodes.ToDictionary(n => n.Item.FullPath, n => n);
+                return null;
+            }
+        }
         #region Constructor
 
         public DirectoryTree(string startingDir)
         {
-            DirectoryItem rootItem = new DirectoryItem(startingDir, DirectoryItemType.Folder);
+            DirectoryItem rootItem;
 
+            rootItem = new DirectoryItem(startingDir, DirectoryItemType.Folder);
             RootNode = new DirectoryTreeNode(rootItem.FullPath, rootItem);
             AddChildrenToTree(RootNode);
+
         }
 
         #endregion
@@ -27,6 +39,10 @@ namespace Q1
         // pass in root node to flatten tree
         IEnumerable<DirectoryTreeNode> Flatten(DirectoryTreeNode node)
         {
+            if (node == null)
+            {
+                yield break;
+            }
             yield return node;
             if (node.GetAllChildren().Count() == 0)
                 yield break;

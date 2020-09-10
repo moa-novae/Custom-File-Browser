@@ -24,7 +24,9 @@ namespace Q1
                 // ignore rootnode since it can not be observed
                 if (dbDirectoryItem.FullPath != state.Tree.RootNode.Item.FullPath)
                 {
-                    state.Tree.GetNode(dbDirectoryItem.FullPath).Item = dbDirectoryItem;
+                    var localTreeNode = state.Tree.GetNode(dbDirectoryItem.FullPath);
+                    if (localTreeNode != null)
+                        state.Tree.GetNode(dbDirectoryItem.FullPath).Item = dbDirectoryItem;
                 }
             }
         }
@@ -69,17 +71,63 @@ namespace Q1
                 UpdateState();
             }
         }
+        public void Add(List<string> paths)
+        {
+            using (var db = new DirectoryContext())
+            {
+                foreach (var path in paths)
+                {
+                    // Find if item at path if file or directory
+                    FileAttributes attr = File.GetAttributes(path);
+                    DirectoryItemType type;
+                    if (attr.HasFlag(FileAttributes.Directory))
+                    {
+                        type = DirectoryItemType.Folder;
+                    }
+                    else
+                    {
+                        type = DirectoryItemType.File;
+                    }
+                    DirectoryItem newDirectoryItem = new DirectoryItem(path, type);
+                    db.Add(newDirectoryItem);
+                }
+                db.SaveChanges();
+                UpdateState();
+            }
+        }
 
         public void Delete(string path)
         {
             using (var db = new DirectoryContext())
             {
-                DirectoryItem directoryItem = (DirectoryItem)db.DirectoryItems.Where(item => item.FullPath == path);
-                db.Remove(directoryItem);
+                db.DirectoryItems.Load();
+                List<DirectoryItem> directoryItems = db.DirectoryItems.Where(item => item.FullPath == path).ToList();
+                foreach (var dI in directoryItems)
+                    db.DirectoryItems.Remove(dI);
                 db.SaveChanges();
                 UpdateState();
             }
         }
+        public void Delete(List<string> paths)
+        {
+            using (var db = new DirectoryContext())
+            {
+                db.DirectoryItems.Load();
+
+                foreach (var path in paths)
+                {
+                    List<DirectoryItem> directoryItems = db.DirectoryItems.Where(item => item.FullPath == path).ToList();
+                    // delete all dbItems with same path
+                    foreach (var dI in directoryItems)
+                    {
+                        db.DirectoryItems.Remove(dI);
+                    }
+                }
+                db.SaveChanges();
+                UpdateState();
+            }
+        }
+
         public DirectoryItem Get(int Id)
         {
             using (var db = new DirectoryContext())
@@ -124,24 +172,30 @@ namespace Q1
         private void SyncDbFileStructureToLocal()
         {
             ObservableCollection<DirectoryItem> dbDirectoryItems = GetAllDirectoryItems();
-            List<string> localItemPaths = state.Tree.FlattenedTreeDictionary.Keys.ToList();
-            List<string> dbItemPaths = dbDirectoryItems.Select(item => item.FullPath).ToList();
+            List<string> localItemPaths;
+            List<string> dbItemPaths;
+            List<string> FilesMissingInDb;
+            List<string> FilesMissingInLocal;
+            // Check if a valid rootpath was passed in
+            // If nothing exists at the rootpath, no directory was created
+
+            string rootPath = state.Tree.RootNode.Item.FullPath;
+            // find path of items in local directory tree, not including root node
+            localItemPaths = state.Tree.FlattenedTreeDictionary.Keys.Where(path => path != rootPath).ToList();
+            // find path of items stored in db
+            dbItemPaths = dbDirectoryItems.Select(item => item.FullPath).ToList();
             // Find files that exist locally but not in db
-            List<string> FilesMissingInDb = localItemPaths.Except(dbItemPaths).ToList();
+            FilesMissingInDb = localItemPaths.Except(dbItemPaths).ToList();
             // Find files that exist in db but not locally
-            List<string> FilesMissingInLocal = dbItemPaths.Except(localItemPaths).ToList();
+            FilesMissingInLocal = dbItemPaths.Except(localItemPaths).ToList();
+
+            // Delete the paths that only exists in db            
+            Delete(FilesMissingInLocal);
 
             // Add the paths missing in db
-            foreach (string path in FilesMissingInDb)
-            {
-                Add(path);
-            }
-            // Delete the paths that only exists in db
-            // Delete the paths that only exists in db
-            foreach (string path in FilesMissingInLocal)
-            {
-                Delete(path);
-            }
+            Add(FilesMissingInDb);
+
+
             // Refresh so only valid left
             dbDirectoryItems = GetAllDirectoryItems();
 
@@ -155,10 +209,11 @@ namespace Q1
 
 
                 }
-
-
             }
         }
+        // if nothing exists at root, and root is an invalid address, delete all directory items in db
+
+
 
 
     }
