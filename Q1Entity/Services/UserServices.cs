@@ -12,13 +12,13 @@ namespace Q1Entity
         {
             using (var db = new DirectoryContext())
             {
-                db.Users.Load();
+                db.Users.Include(u => u.UserDirectoryItems).ThenInclude(udi => udi.DirectoryItem).Load();
                 var temp = db.Users.Local.ToObservableCollection();
                 // return the copy so it persists after context is disposed
                 return new ObservableCollection<User>(temp);
             }
         }
-        public void Add(User u)
+        public User Add(User u)
         {
             using (var db = new DirectoryContext())
             {
@@ -26,6 +26,7 @@ namespace Q1Entity
                 db.SaveChanges();
                 
             }
+            return u;
         }
         public User Get(int Id)
         {
@@ -34,18 +35,20 @@ namespace Q1Entity
                 return db.Users.Single(u => u.UserId == Id);
             }
         }
-        public void Delete(int Id)
+        public User Delete(User u)
         {
             using (var db = new DirectoryContext())
             {
-                User user = new User(null) { UserId = Id };
+                User user = new User(null) { UserId = u.UserId };
                 db.Users.Attach(user);
                 db.Users.Remove(user);
                 db.SaveChanges();
                
             }
+            return u;
+ 
         }
-        public void Update(User u)
+        public User Update(User u)
         {
             using (var db = new DirectoryContext())
             {
@@ -53,6 +56,7 @@ namespace Q1Entity
                 db.SaveChanges();
                 
             }
+            return u;
 
         }
 

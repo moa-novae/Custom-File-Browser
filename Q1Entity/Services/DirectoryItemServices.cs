@@ -25,8 +25,9 @@ namespace Q1Entity
                 return new ObservableCollection<DirectoryItem>(directoryItems);
             }
         }
-        public void Add(string path)
+        public DirectoryItem Add(string path)
         {
+            DirectoryItem newDirectoryItem;
             // Find if item at path if file or directory
             FileAttributes attr = File.GetAttributes(path);
             DirectoryItemType type;
@@ -40,14 +41,16 @@ namespace Q1Entity
             }
             using (var db = new DirectoryContext())
             {
-                DirectoryItem newDirectoryItem = new DirectoryItem(path, type);
+                newDirectoryItem = new DirectoryItem(path, type);
                 db.Add(newDirectoryItem);
                 db.SaveChanges();
             }
+            return newDirectoryItem;
         }
         // Overloaded method for accepting list of paths
-        public void Add(List<string> paths)
+        public List<DirectoryItem> Add(List<string> paths)
         {
+            List<DirectoryItem> newDirectoryItems = new List<DirectoryItem>();
             using (var db = new DirectoryContext())
             {
                 foreach (var path in paths)
@@ -64,40 +67,48 @@ namespace Q1Entity
                         type = DirectoryItemType.File;
                     }
                     DirectoryItem newDirectoryItem = new DirectoryItem(path, type);
+                    newDirectoryItems.Add(newDirectoryItem);
                     db.Add(newDirectoryItem);
                 }
                 db.SaveChanges();
             }
+            return newDirectoryItems;
         }
-        public void Delete(string path)
+        public DirectoryItem Delete(string path)
         {
+            List<DirectoryItem> deletedDirectoryItems;
             using (var db = new DirectoryContext())
             {
                 db.DirectoryItems.Load();
-                List<DirectoryItem> directoryItems = db.DirectoryItems.Where(item => item.FullPath == path).ToList();
-                foreach (var dI in directoryItems)
+                // Is a list in case multiple directory items with same path is accidentally saved
+                deletedDirectoryItems = db.DirectoryItems.Where(item => item.FullPath == path).ToList();
+                foreach (var dI in deletedDirectoryItems)
                     db.DirectoryItems.Remove(dI);
                 db.SaveChanges();
             }
+            return deletedDirectoryItems.FirstOrDefault();
+
         }
         // Overloaded delete that accepts a list of paths instead of only one path
-        public void Delete(List<string> paths)
+        public List<DirectoryItem> Delete(List<string> paths)
         {
+            List<DirectoryItem> deletedDirectoryItems = new List<DirectoryItem>();
             using (var db = new DirectoryContext())
             {
                 db.DirectoryItems.Load();
 
                 foreach (var path in paths)
                 {
-                    List<DirectoryItem> directoryItems = db.DirectoryItems.Where(item => item.FullPath == path).ToList();
+                    deletedDirectoryItems = db.DirectoryItems.Where(item => item.FullPath == path).ToList();
                     // delete all dbItems with same path
-                    foreach (var dI in directoryItems)
+                    foreach (var dI in deletedDirectoryItems)
                     {
                         db.DirectoryItems.Remove(dI);
                     }
                 }
                 db.SaveChanges();
             }
+            return deletedDirectoryItems;
         }
         public DirectoryItem Get(string path)
         {
@@ -117,10 +128,11 @@ namespace Q1Entity
             return d;
         }
 
-        public void UpdateUserDirectoryItems(List<User> updatedList, DirectoryItem selectedItem)
+        public List<User> UpdateUserDirectoryItems(List<User> updatedList, DirectoryItem selectedItem)
         {
             using (var db = new DirectoryContext())
             {
+                // Get the join tables of the selected directory item
                 var model = db.DirectoryItems
                  .Include(d => d.UserDirectoryItems)
                  .FirstOrDefault(d => d.DirectoryItemId == selectedItem.DirectoryItemId);
@@ -132,9 +144,11 @@ namespace Q1Entity
                         UserId = u.UserId,
                         DirectoryItemId = selectedItem.DirectoryItemId
                     });
+                // update the old join tables with the new ones
                 db.TryUpdateManyToMany(currentJoinTables, newJoinTables, x => x.UserId);
                 db.SaveChanges();
             }
+            return updatedList;
         }
     }
 }

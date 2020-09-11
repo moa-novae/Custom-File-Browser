@@ -197,8 +197,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Main\StateServices\DirectoryItemStateServices.cs" />
-    <Compile Include="Main\StateServices\UserStateServices.cs" />
+    <Compile Include="Main\State\DirectoryItemStateServices.cs" />
+    <Compile Include="Main\State\UserStateServices.cs" />
     <Compile Include="Main\State\DirectoryItemState.cs" />
     <Compile Include="Main\State\UserState.cs" />
     <Compile Include="Main\ViewModels\EditDirectoryItemViewModel.cs" />

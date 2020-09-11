@@ -42,9 +42,11 @@
                 <ColumnDefinition Width="2*"/>
 
             </Grid.ColumnDefinitions>
+            
+            <!---->
             <TreeView x:Name="UserView" ItemsSource="{Binding UserBrowser.AllUsers}">
 
-                <!--Bind selected treeview item to UserBrowser view model-->
+                <!--The event triggers bind selected treeview item to UserBrowser view model-->
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
                         <i:InvokeCommandAction Command="{Binding UserBrowser.SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=UserView, Path=SelectedItem}"/>
@@ -63,13 +65,13 @@
                             <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type entity:DirectoryItem}">
+                    <DataTemplate DataType="{x:Type entity:UserDirectoryItem}">
                         <StackPanel Orientation="Horizontal">
                             <Image Width="20" Margin="3" 
                                            Source="{Binding Type,
                                         Converter={x:Static local:HeaderToImageConverter.Instance}
                                         }"/>
-                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding DirectoryItem.FullPath}" />
                         </StackPanel>
                     </DataTemplate>
                 </TreeView.Resources>
@@ -77,8 +79,8 @@
             </TreeView>
 
 
-            <StackPanel Orientation="Vertical"  Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <Grid>
+            <DockPanel Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <Grid DockPanel.Dock="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width ="*"/>
                         <ColumnDefinition Width ="Auto"/>
@@ -94,7 +96,7 @@
                 </Grid>
 
 
-                <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.ChildViewModels}">
+                <TreeView x:Name="FolderView" ItemsSource="{Binding FileBrowser.ChildViewModels}" BorderThickness="0">
 
                     <!--Bind selected treeview item to FileBrowser view model-->
                     <i:Interaction.Triggers>
@@ -123,7 +125,7 @@
 
                 </TreeView>
 
-            </StackPanel>
+            </DockPanel>
 
 
         </Grid>

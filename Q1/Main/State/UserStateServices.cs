@@ -29,9 +29,9 @@ namespace Q1.Services
             return userServices.Get(Id);
 
         }
-        public void Delete(int Id)
+        public void Delete(User u)
         {
-            userServices.Delete(Id);
+            userServices.Delete(u);
             updateState();
 
         }
