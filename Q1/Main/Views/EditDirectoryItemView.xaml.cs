@@ -11,7 +11,7 @@ namespace Q1
     {
         public EditDirectoryItemView(DirectoryItemStateServices directoryItemServices, DirectoryItemState dirState, DirectoryItem selectedDirectoryItem, UserState userState)
         {
-            DataContext = new EditDirectoryItemViewModel(directoryItemServices, dirState, selectedDirectoryItem, userState);
+            DataContext = new EditDirectoryItemViewModel(directoryItemServices, selectedDirectoryItem, userState);
 
             InitializeComponent();
         }

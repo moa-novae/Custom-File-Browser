@@ -224,7 +224,6 @@
     <Compile Include="Main\ViewModels\Base\RelayCommand.cs" />
     <Compile Include="Main\ViewModels\DirectoryStructureViewModel.cs" />
     <Compile Include="Main\ViewModels\MainViewModel.cs" />
-    <Compile Include="Main\ViewModels\UserItemViewModel.cs" />
     <Compile Include="Main\ViewModels\UserViewModel.cs" />
     <Compile Include="HeaderToImageConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -288,6 +287,9 @@
       <Project>{573d05da-f7d0-4139-929f-98a31e77cb53}</Project>
       <Name>Q1Entity</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\delete-user-directory-item.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

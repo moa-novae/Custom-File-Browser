@@ -7,7 +7,7 @@ namespace TechAssessment
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Q3.Multiply(1));
+            Console.WriteLine(Q3.Multiply());
             try
             {
                 Console.WriteLine(Q2.FindAngleBetweenClockHands(24, 30));

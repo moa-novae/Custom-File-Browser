@@ -16,18 +16,6 @@ namespace Q1
         readonly Predicate<object> _canExecute;
         #endregion
 
-        #region Public Events
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-        #endregion
-
         #region Constructor
         /// <summary>
         /// Default constructor
@@ -45,6 +33,19 @@ namespace Q1
 
         }
         #endregion
+
+        #region Public Events
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+        #endregion
+
 
         #region Command Methods
 

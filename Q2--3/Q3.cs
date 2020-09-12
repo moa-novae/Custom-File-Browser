@@ -4,18 +4,16 @@
  * The number of times which we repeatedly add the multiplier is equal to the multiplicand.
  * Multiply(4, 3) = 4 + Multiply(4, 2) = 4 + 4 + Multiply(4, 1) = 4 + 4 + 4 + Multiply(4, 0)
 */
-using System;
-
 namespace TechAssessment
 {
-    public class Q3
+    class Q3
     {
         /// <summary>
-        /// Multiply two doubles with recursion and addition
+        /// 
         /// </summary>
-        /// <param name="multiplier">double type</param>
-        /// <param name="multiplicand">double type</param>
-        /// <returns>a double as the result</returns>
+        /// <param name="multiplier"></param>
+        /// <param name="multiplicand"></param>
+        /// <returns></returns>
         public static double Multiply(double multiplier = 1, double multiplicand = 1)
         {
             // Base case is achieved when multiplicand is 0
@@ -44,36 +42,8 @@ namespace TechAssessment
             // If anything else happens, returns -1 as error
             else
             {
-                return Convert.ToDouble(-1);
+                return -1;
             }
-        }
-
-        // Additional overloaded methods that accepts arguments other than int and double can be implemented
-
-        /// <summary>
-        /// Multiply two int with recursion and addition
-        /// </summary>
-        /// <param name="multiplier">int type</param>
-        /// <param name="multiplicand">int type</param>
-        /// <returns>a double as the result</returns>
-        public static double Multiply(int multiplier = 1, int multiplicand = 1)
-        {
-            double m1 = Convert.ToDouble(multiplier);
-            double m2 = Convert.ToDouble(multiplicand);
-            return Multiply(m1, m2);
-        }
-
-        /// <summary>
-        /// Multiply two doubles with recursion and addition
-        /// </summary>
-        /// <param name="multiplier">int type</param>
-        /// <param name="multiplicand">int type</param>
-        /// <returns>a double as the result</returns>
-        public static double Multiply(string multiplier = "1", string multiplicand = "1")
-        {
-            double m1 = Convert.ToDouble(multiplier);
-            double m2 = Convert.ToDouble(multiplicand);
-            return Multiply(m1, m2);
         }
     }
 }

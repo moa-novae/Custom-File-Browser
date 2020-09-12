@@ -9,9 +9,39 @@ namespace Q1
     /// </summary>
     public class DirectoryItemViewModel : BaseViewModel
     {
-        #region public properties
+        #region Constructor
+    
+        public DirectoryItemViewModel(DirectoryTreeNode node)
+        {
+            // Set the directoryItem this view model represents
+            Item = node.Item;
 
+            // Set the DirectoryTreeNode this view model represents for easier access 
+            Node = node;
+
+            // only setup children when set IsExpanded to true
+            if (IsExpanded == true)
+            {
+                Expand();
+            }
+            else
+            {
+                ClearChildren();
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// DirectoryTreeNode which contains information such as node children 
+        /// </summary>
         public DirectoryTreeNode Node { get; set; }
+
+        /// <summary>
+        /// DirectoryItem which contains inforamtion such as path of directory item
+        /// </summary>
         public DirectoryItem Item { get; set; }
 
         /// <summary>
@@ -20,9 +50,8 @@ namespace Q1
         public string Name { get { return Item.Type == DirectoryItemType.Drive ? Item.FullPath : DirectoryStructure.GetFileFolderName(Item.FullPath); } }
 
 
-        public ObservableCollection<DirectoryItemViewModel> children;
         /// <summary>
-        /// A list of all children contained inside this item
+        /// A list of all direct children contained inside this directory item. Each child has its own view model
         /// </summary>
         public ObservableCollection<DirectoryItemViewModel> Children
         {
@@ -42,14 +71,14 @@ namespace Q1
             }
         }
 
-
-        // Files cannot be expanded
         /// <summary>
-        /// indicates if item can be expanded
+        /// Indicates to treeview in xaml if item can be expanded
         /// </summary>
         public bool CanExpand { get { return Item.Type != DirectoryItemType.File; } }
 
-
+        /// <summary>
+        /// Check if current tree view node is expanded
+        /// </summary>
         public bool IsExpanded
         {
             get
@@ -69,37 +98,25 @@ namespace Q1
             }
         }
 
+        private ObservableCollection<DirectoryItemViewModel> children;
+
         #endregion
 
+        #region Helper Methods
 
-        #region Constructor
         /// <summary>
-        /// Default constructor
+        /// Add the appropriate children of this directory item for the tree view
         /// </summary>
-        /// <param name="fullpath">The full path of this item</param>
-        /// <param name="type">The type of item</param>
-        public DirectoryItemViewModel(DirectoryTreeNode node)
+        public void Expand()
         {
-            // Set the directoryItem this view model represents
-            Item = node.Item;
+            if (Item.Type == DirectoryItemType.File)
+                return;
+            //When expand, find all children
 
-            // Set Node for easier access 
-            Node = node;
-            // only setup children when set IsExpanded to true
-            if (IsExpanded == true)
-            {
-                Expand();
-            }
-            else
-            {
-                ClearChildren();
-            }
-
+            Dictionary<string, DirectoryTreeNode> childrenNodes = Node.GetAllChildren();
+            Children = new ObservableCollection<DirectoryItemViewModel>(
+                childrenNodes.Values.Where(child => child.IsCriteriaMatched != false).Select(childNode => new DirectoryItemViewModel(childNode)));
         }
-
-        #endregion
-
-        #region Helper Function
 
         /// <summary>
         /// Removes all children from the list, adding a dummy item to show the expand icon if required
@@ -113,25 +130,11 @@ namespace Q1
             if (Item.Type != DirectoryItemType.File)
             {
                 Children.Add(null);
-
             }
 
         }
 
         #endregion
 
-        /// <summary>
-        /// Expand this directory and find all children
-        /// </summary>
-        public void Expand()
-        {
-            if (Item.Type == DirectoryItemType.File)
-                return;
-            //When expand, find all children
-
-            Dictionary<string, DirectoryTreeNode> childrenNodes = Node.GetAllChildren();
-            Children = new ObservableCollection<DirectoryItemViewModel>(
-                childrenNodes.Values.Where(child => child.IsCriteriaMatched != false).Select(childNode => new DirectoryItemViewModel(childNode)));
-        }
     }
 }

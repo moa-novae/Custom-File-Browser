@@ -9,14 +9,16 @@ namespace Q1
     /// </summary>
     class DirectoryStructure
     {
+        #region Methods
         /// <summary>
-        /// Gets the directorys top-level content
+        /// Gets the directory's top-level content
         /// </summary>
         /// <param name="fullPath">The full path to the directory</param>
         /// <returns></returns>
         public static List<DirectoryItem> GetDirectoryContents(string fullPath)
         {
             var items = new List<DirectoryItem>();
+
             #region Get directories
             // create a blank list for directories
             var directories = new List<string>();
@@ -32,10 +34,9 @@ namespace Q1
 
             #endregion
 
-
             #region Get Files
 
-            //try and get directories from the folder
+            //try and get files from the folder
             try
             {
                 var fs = Directory.GetFiles(fullPath);
@@ -44,6 +45,7 @@ namespace Q1
             }
             catch { }
             return items;
+            #endregion
 
 
         }

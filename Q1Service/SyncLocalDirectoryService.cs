@@ -12,6 +12,19 @@ namespace Q1Service
 {
     public partial class SyncLocalDirectoryService : ServiceBase
     {
+        /** If the service is enabled while the wpf application is running, and 
+         * changes are made to the local directory, there will be errors when the
+         * wpf application tries to do any database actions. I am not exactly sure 
+         * how to inform wpf that changes are made to the local directory, and it needs
+         * to refresh its current state. Perhaps I can also use filesystemWatcher in wpf?
+         * I would have to check if db action is valid, and stop the user from doing the action
+         * while refreshing the wpf state. 
+         * 
+         **/
+
+        /// <summary>
+        /// Windows service for syncing local file directory with the db
+        /// </summary>
         public SyncLocalDirectoryService()
         {
             InitializeComponent();
@@ -29,7 +42,7 @@ namespace Q1Service
                 EnableRaisingEvents = true,
                 IncludeSubdirectories = true
             };
-            fileSystemWatcher.Created += FileSystemWatcher_Created;
+            fileSystemWatcher.Created += ItemCreated;
             fileSystemWatcher.Deleted += ItemDeleted;
             fileSystemWatcher.Renamed += ItemRenamed;
 
@@ -67,7 +80,7 @@ namespace Q1Service
             
         }
 
-        private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
+        private void ItemCreated(object sender, FileSystemEventArgs e)
         {
             string createdItemPath = e.FullPath;
             directoryItemServices.Add(createdItemPath);
@@ -109,10 +122,11 @@ namespace Q1Service
             if (Directory.Exists(path))
             {
                 AddItemPathsToList(path);
+
                 // remove the root path from the list since we don't want it to be saved into db
                 directoryItemPaths.RemoveAll(i => i == path);
             }
-            // if file, add the single path
+            // if file, simply add the file path
             else if (File.Exists(path))
             {
                 directoryItemPaths.Add(path);

@@ -7,12 +7,38 @@ using Q1.State;
 namespace Q1
 {
     /// <summary>
-    /// The view model for the application main Directory view
+    /// This view model serve as a container for all the root items in the root directory. 
+    /// Each root item is its own view model (DirectoryitemViewModel)
     /// </summary>
     public class DirectoryStructureViewModel : BaseViewModel
     {
-        private ObservableCollection<DirectoryItemViewModel> childViewModels = new ObservableCollection<DirectoryItemViewModel>();
-        #region public properties
+        #region Constructor
+
+        public DirectoryStructureViewModel(DirectoryItemStateServices dirServ, DirectoryItemState dirState, UserState us)
+        {
+            // directoryTreeState contains an instance of current directory in tree structure
+            directoryTreeState = dirState;
+            userState = us;
+            // Responsible for interacting with db and setting state
+            directoryItemServices = dirServ;
+
+            // Generate sub view models (DirectoryItemViewModel) for each of the root items in the root folder. Each root item in the root folder is the root of its own tree
+            ChildViewModels = new ObservableCollection<DirectoryItemViewModel>();
+            if (directoryTreeState.RootChildren != null)
+            {
+                ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(
+                    directoryTreeState.RootChildren?.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
+            }
+
+            // set RelayCommands
+            SelectedItemChangedCommand = new RelayCommand(args => SelectedItemChanged(args));
+            OpenEditDirectoryItemWindowCommand = new RelayCommand(OpenEditDirectoryItemWindow, CanOpenEditDirectoryItemWindow);
+            ShowAllTreeNodesCommand = new RelayCommand(ClearSearchCriteria, IsSearchStringNotEmpty);
+            SearchAllTreeNodesCommand = new RelayCommand(FilterForEligibleTreeNodes, IsSearchStringNotEmpty);
+        }
+        #endregion
+
+        #region Properties
         /// <summary>
         /// A list of all directories on the machine
         /// </summary>
@@ -32,13 +58,15 @@ namespace Q1
             }
         }
 
-        #endregion
-
-        public DirectoryItem SelectedDirectoryItem { get; set; }
-        private DirectoryItemState directoryTreeState { get; set; }
-        private UserState userState { get; set; }
-        private DirectoryItemStateServices directoryItemServices { get; set; }
+        // Property for keeping track the search string in the search bar
         public string SearchString { get; set; } = "";
+        public DirectoryItem SelectedDirectoryItem { get; set; }
+        private UserState userState { get; set; }
+        private DirectoryItemState directoryTreeState { get; set; }
+        private DirectoryItemStateServices directoryItemServices { get; set; }
+        private ObservableCollection<DirectoryItemViewModel> childViewModels = new ObservableCollection<DirectoryItemViewModel>();
+
+        #endregion
 
         #region Public commands
 
@@ -49,47 +77,19 @@ namespace Q1
 
         #endregion
 
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public DirectoryStructureViewModel(DirectoryItemStateServices dirServ, DirectoryItemState dirState, UserState us)
-        {
-            // directoryTreeState contains an instance of current directory tree
-            directoryTreeState = dirState;
-            directoryItemServices = dirServ;
-            userState = us;
-
-            // Generate sub view models for each of the root items in the root folder. Each root item in the root folder is the root of its own tree
-            ChildViewModels = new ObservableCollection<DirectoryItemViewModel>();
-            if (directoryTreeState.RootChildren != null)
-            {
-                ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(
-                    directoryTreeState.RootChildren?.Values.Select(childNode => new DirectoryItemViewModel(childNode)));
-            }
-
-            // set RelayCommands
-            SelectedItemChangedCommand = new RelayCommand(args => SelectedItemChanged(args));
-            OpenEditDirectoryItemWindowCommand = new RelayCommand(OpenEditDirectoryItemWindow, CanOpenEditDirectoryItemWindow);
-            ShowAllTreeNodesCommand = new RelayCommand(ClearSearchCriteria, IsSearchStringNotEmpty);
-            SearchAllTreeNodesCommand = new RelayCommand(FilterForEligibleTreeNodes, IsSearchStringNotEmpty);
-        }
-        #endregion
-
-        #region Methods for commands
+        #region Private methods for commands
 
         /// <summary>
         /// Open new windows allowing user to view and edit directory item properties
         /// </summary>
         /// <param name="message"></param>
-        public void OpenEditDirectoryItemWindow(object message)
+        private void OpenEditDirectoryItemWindow(object message)
         {
             EditDirectoryItemView view = new EditDirectoryItemView(directoryItemServices, directoryTreeState, SelectedDirectoryItem, userState);
             view.Show();
         }
 
-        public bool CanOpenEditDirectoryItemWindow(object message)
+        private bool CanOpenEditDirectoryItemWindow(object message)
         {
             return SelectedDirectoryItem != null ? true : false;
         }
@@ -102,9 +102,9 @@ namespace Q1
 
         #endregion
 
-        #region Methods for searching directory items
+        #region Methods and properties for searching directory items
 
-        public void FilterForEligibleTreeNodes(object message)
+        private void FilterForEligibleTreeNodes(object message)
         {
             directoryTreeState.Tree.SetAllDirectoryTreeNodeEligibility(SearchString);
             var ItemsThatMatchCriteria = new ObservableCollection<DirectoryItemViewModel>();
@@ -114,6 +114,8 @@ namespace Q1
                 if (item.Node.IsCriteriaMatched != false)
                     ItemsThatMatchCriteria.Add(item);
             }
+
+            // Local recursive method that ensures all folder containing the searched item expands
             void ExpandFoldersContainingSearchedItems(DirectoryItemViewModel viewModel)
             {
                 if (viewModel.Node.IsCriteriaMatched == true)
@@ -131,16 +133,18 @@ namespace Q1
                     ExpandFoldersContainingSearchedItems(childViewModel);
                 }
             }
+
             foreach (var item in ItemsThatMatchCriteria)
             {
                 ExpandFoldersContainingSearchedItems(item);
             }
 
+            // Set the child view models with the filterd items
             ChildViewModels = new ObservableCollection<DirectoryItemViewModel>(ItemsThatMatchCriteria);
         }
 
-
-        public void ClearSearchCriteria(object message)
+        // method for clearing out the search bar and resetting the directory tree view
+        private void ClearSearchCriteria(object message)
         {
             directoryTreeState.Tree.SetAllDirectoryTreeNodeEligibleNull();
             SearchString = "";
@@ -148,7 +152,7 @@ namespace Q1
                 directoryTreeState.RootChildren.Values.Select(childNode => new DirectoryItemViewModel(childNode) { IsExpanded = false }));
         }
 
-        public bool IsSearchStringNotEmpty(object message)
+        private bool IsSearchStringNotEmpty(object message)
         {
             return SearchString != "";
         }

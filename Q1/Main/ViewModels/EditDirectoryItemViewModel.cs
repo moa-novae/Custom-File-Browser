@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -9,33 +10,36 @@ using Q1Entity;
 
 namespace Q1
 {
+    /// <summary>
+    /// View Model for editing details of a directory item, including owners and notes
+    /// </summary>
     public class EditDirectoryItemViewModel : BaseViewModel
     {
-        public EditDirectoryItemViewModel(DirectoryItemStateServices dirServ, DirectoryItemState dirState, DirectoryItem selectedDirectoryItem, UserState userState)
+        #region Constructor
+        public EditDirectoryItemViewModel(DirectoryItemStateServices dirServ, DirectoryItem selectedDirectoryItem, UserState userState)
         {
             SelectedDirectoryItem = selectedDirectoryItem;
             currentUsers = userState.CurrentUsers;
             directoryItemServices = dirServ;
-            directoryItemState = dirState;
             // Setup commands
             AddOwnerCommand = new RelayCommand(AddOwner, NonOwnerSelected);
             RemoveOwnerCommand = new RelayCommand(RemoveOwner, OwnerSelected);
             SaveDirectoryItemInfoCommand = new RelayCommand(SaveDirectoryInfo);
             CloseWindowCommand = new RelayCommand(CloseWindow);
 
-            // If the DirectoryItem has no owners
-            if (SelectedDirectoryItem.UserDirectoryItems == null)
+            // local function for checking if join tables contain the selectedDirectoryItem 
+            bool CheckIfJoinContainsDirectoryItem(List<UserDirectoryItem> userDirectoryItems)
             {
-                //Set up empty owners and nonOwners is equal to current user list
-                Owners = new ObservableCollection<User>();
-                nonOwners = new ObservableCollection<User>(currentUsers);
+                if (userDirectoryItems == null)
+                    return false;
+                return userDirectoryItems.Any(udi => udi.DirectoryItemId == selectedDirectoryItem.DirectoryItemId);
             }
-            else
-            {
-                // extrapolate owners of a directory item from jointable between users and directory items
-                // UserDirectoryItems is a join table and all users in the join table are owners of the attached directory item
-                string selectedDirectoryItemPath = selectedDirectoryItem.FullPath;
-                Owners = new ObservableCollection<User>(directoryItemState.Tree.GetNode(selectedDirectoryItemPath).Item.UserDirectoryItems?.Select(joinTable => joinTable.User));
+
+            // If the DirectoryItem has no owners
+            if (currentUsers.Any(u => CheckIfJoinContainsDirectoryItem(u.UserDirectoryItems)))
+            {              
+                // loop over all jointables and find users who own the directory item
+                Owners = new ObservableCollection<User>(currentUsers.Where(u => CheckIfJoinContainsDirectoryItem(u.UserDirectoryItems)));
                 List<int> ownersIds = Owners.Select(o => o.UserId).ToList();
                 // Users in the users list who is not an owner are non-owners
                 // Can't use Except method to filter because Users in Owners have different references than Users in currentUsers
@@ -43,15 +47,23 @@ namespace Q1
                 NonOwners = new ObservableCollection<User>(currentUsers.Where(u => !ownersIds.Contains(u.UserId)));
 
             }
+            // If the directory has owners
+            else
+            {
+                //Set up empty owners and nonOwners is equal to current user list
+                Owners = new ObservableCollection<User>();
+                nonOwners = new ObservableCollection<User>(currentUsers);
+            }
         }
 
-        private DirectoryItemState directoryItemState { get; set; }
-        private ObservableCollection<User> currentUsers { get; set; } = new ObservableCollection<User>();
-        private ObservableCollection<User> nonOwners { get; set; } = new ObservableCollection<User>();
-        private ObservableCollection<User> owners { get; set; } = new ObservableCollection<User>();
-        private DirectoryItemStateServices directoryItemServices { get; set; }
+        #endregion
+
+        #region Properties
 
         public DirectoryItem SelectedDirectoryItem { get; set; }
+
+        // The setter of all observable collection is done like this to ensure that the UI will update 
+        //whenever a new value is set to each observable collection
         public ObservableCollection<User> NonOwners
         {
             get
@@ -84,6 +96,14 @@ namespace Q1
         public RelayCommand RemoveOwnerCommand { get; private set; }
         public RelayCommand SaveDirectoryItemInfoCommand { get; set; }
         public RelayCommand CloseWindowCommand { get; set; }
+        private ObservableCollection<User> currentUsers { get; set; } = new ObservableCollection<User>();
+        private ObservableCollection<User> nonOwners { get; set; } = new ObservableCollection<User>();
+        private ObservableCollection<User> owners { get; set; } = new ObservableCollection<User>();
+        private DirectoryItemStateServices directoryItemServices { get; set; }
+
+        #endregion
+
+        #region methods
 
         private void AddOwner(object message)
         {
@@ -92,7 +112,7 @@ namespace Q1
         }
         private bool OwnerSelected(object message)
         {
-            return SelectedOwner != null ? true : false;
+            return SelectedOwner != null;
         }
         private void RemoveOwner(object message)
         {
@@ -102,7 +122,7 @@ namespace Q1
 
         private bool NonOwnerSelected(object message)
         {
-            return SelectedNonOwner != null ? true : false;
+            return SelectedNonOwner != null;
         }
         private void SaveDirectoryInfo(object message)
         {
@@ -110,11 +130,12 @@ namespace Q1
             directoryItemServices.UpdateUserDirectoryItems(owners.ToList(), SelectedDirectoryItem);
             CloseWindow(message);
         }
+        // Closes this view model's window
         private void CloseWindow(object message)
         {
             ((Window)message).Close();
         }
 
-
+        #endregion
     }
 }

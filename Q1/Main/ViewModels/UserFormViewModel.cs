@@ -4,22 +4,13 @@ using Q1.Services;
 using Q1Entity;
 namespace Q1
 {
+    // This view model is responsible for both creating users and editing them
     public class UserFormViewModel : BaseViewModel
     {
-        private UserStateServices userServices { get; set; }
-        public RelayCommand CreateNewUserCommand { get; private set; }
-        public RelayCommand CloseWindowCommand { get; private set; }
-        #region Public User properties
-        public String Name { get; set; }
-        public String Email { get; set; }
-        public String Phone { get; set; }
-        public int? UserId { get; set; }
-
-        #endregion
-        // This view model is responsible for both creating users and editing them
+        #region Constructor
 
         /// <summary>
-        /// Constructor for creating new users
+        /// Constructor for creating a view model for creating new users
         /// </summary>
         /// <param name="us"></param>
         public UserFormViewModel(UserStateServices us)
@@ -30,7 +21,7 @@ namespace Q1
         }
 
         /// <summary>
-        /// Constructor editing existing new users
+        /// Constructor for creating a view model for editing existing new users
         /// </summary>
         /// <param name="us"></param>
         /// <param name="user"></param>
@@ -43,8 +34,22 @@ namespace Q1
             UserId = user.UserId;
         }
 
+        #endregion
 
-        public bool CanCreateNewUser(object message)
+        #region properties
+
+        #region Public User properties
+        public String Name { get; set; }
+        public String Email { get; set; }
+        public String Phone { get; set; }
+        public int? UserId { get; set; }
+
+        #endregion
+
+        public RelayCommand CreateNewUserCommand { get; private set; }
+        public RelayCommand CloseWindowCommand { get; private set; }
+        private UserStateServices userServices { get; set; }
+        private bool CanCreateNewUser(object message)
         {
             if (string.IsNullOrWhiteSpace(Name))
                 return false;
@@ -52,7 +57,7 @@ namespace Q1
                 return true;
         }
 
-        public void CreateNewUser(object message)
+        private void CreateNewUser(object message)
         {
             // UserId only has value when editing user
             if (UserId == null)
@@ -69,11 +74,15 @@ namespace Q1
             CloseWindow(message);
 
         }
-
-        public void CloseWindow(object message)
+        /// <summary>
+        /// Used for the command of closing windows
+        /// </summary>
+        /// <param name="message"></param>
+        private void CloseWindow(object message)
         {
             ((Window)message).Close();
         }
 
+        #endregion
     }
 }

@@ -5,9 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Q1Entity
 {
+    /// <summary>
+    /// Interact with database and modifies information about users
+    /// </summary>
     public class UserServices
     {
-        
+        /// <summary>
+        /// Get all users registered
+        /// </summary>
+        /// <returns>An observable collection of all the users</returns>
         public ObservableCollection<User> GetAllUsers()
         {
             using (var db = new DirectoryContext())
@@ -18,6 +24,12 @@ namespace Q1Entity
                 return new ObservableCollection<User>(temp);
             }
         }
+
+        /// <summary>
+        /// Add a user
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns>The new user which is added</returns>
         public User Add(User u)
         {
             using (var db = new DirectoryContext())
@@ -28,6 +40,12 @@ namespace Q1Entity
             }
             return u;
         }
+
+        /// <summary>
+        /// Get a user by id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>The user requested by id</returns>
         public User Get(int Id)
         {
             using (var db = new DirectoryContext())
@@ -35,6 +53,12 @@ namespace Q1Entity
                 return db.Users.Single(u => u.UserId == Id);
             }
         }
+
+        /// <summary>
+        /// Delete a user from the database
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns>the deleted user</returns>
         public User Delete(User u)
         {
             using (var db = new DirectoryContext())
@@ -48,6 +72,12 @@ namespace Q1Entity
             return u;
  
         }
+
+        /// <summary>
+        /// Update user information. Don't use this for adding users to directoy items
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns>the updated user</returns>
         public User Update(User u)
         {
             using (var db = new DirectoryContext())

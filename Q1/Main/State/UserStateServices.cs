@@ -1,48 +1,83 @@
-﻿using Q1.State;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Q1.State;
 using Q1Entity;
 
 namespace Q1.Services
 {
     public class UserStateServices
     {
-        private UserState state { get; set; }
-        private UserServices userServices { get; set; }
-        private void updateState()
+        #region Constructor
+
+        public UserStateServices(UserState us)
         {
-            state.CurrentUsers = userServices.GetAllUsers();
-        }
-        public UserStateServices(UserState userState)
-        {
-            state = userState;
+            userState = us;
             userServices = new UserServices();
-            state.CurrentUsers = userServices.GetAllUsers();
+            // initialize user state
+            userState.CurrentUsers = userServices.GetAllUsers();
         }
 
+        #endregion
+
+        #region Properties
+
+        private UserState userState { get; set; }
+        private UserServices userServices { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Add a user based on passed in entity
+        /// </summary>
+        /// <param name="u"></param>
         public void Add(User u)
         {
             userServices.Add(u);
-            updateState();
+            u.UserDirectoryItems = new List<UserDirectoryItem>();
+            userState.CurrentUsers.Add(u);
 
         }
+
+        /// <summary>
+        /// Get a user based on UserId
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public User Get(int Id)
         {
             return userServices.Get(Id);
 
         }
+
+        /// <summary>
+        /// Delete a user
+        /// </summary>
+        /// <param name="u"></param>
         public void Delete(User u)
         {
             userServices.Delete(u);
-            updateState();
+            userState.CurrentUsers.Remove(u);
 
         }
+
+        /// <summary>
+        /// Update user inforamtion. Don't use this for adding owned directory items
+        /// </summary>
+        /// <param name="u"></param>
         public void Update(User u)
         {
             userServices.Update(u);
-            updateState();
-
-
+            User oldUser = userState.CurrentUsers.FirstOrDefault(user => user.UserId == u.UserId);
+            // remove the old user
+            userState.CurrentUsers.Remove(oldUser);
+            // and repalce it with the new one
+            userState.CurrentUsers.Add(u);
         }
 
+        #endregion
     }
 }
 

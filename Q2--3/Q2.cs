@@ -11,22 +11,22 @@ using System;
 
 namespace TechAssessment
 {
-    public class Q2
+    class Q2
     {
         /// <summary>
         /// Find the angle between the hour hand and the minute hand on a clock
         /// </summary>
-        /// <param name="hour">The hour of the time as double type</param>
-        /// <param name="min">The minute of the time as double type</param>
+        /// <param name="hour">The hour of the time</param>
+        /// <param name="min">The minute of the time</param>
         /// <returns>the smallest angle between the hour hand and minute hand on a clock</returns>
         public static double FindAngleBetweenClockHands(int hour, int min)
         {
             // handle invalid hour or min parameters
-            if (hour >= 24 || hour < 0)
+            if (hour > 24 || hour < 0)
             {
                 throw new ArgumentException(String.Format("{0} hour is not a valid hour", hour), "hour");
             }
-            if (min >= 60 || min < 0)
+            if (min > 60 || min < 0)
             {
                 throw new ArgumentException(String.Format("{0} minute is not a valid minute", min), "min");
             }
@@ -37,20 +37,6 @@ namespace TechAssessment
             // Since angle between hands can be measured clockwise or counter-clockwise, take the smallest of the two
             return Math.Min(360 - AngleBetweenHands, AngleBetweenHands);
 
-        }
-        // Overload method so that string can also be acepted
-        // Additional overloaded methods that accepts additional types of arguments can be implemented
-        /// <summary>
-        /// Find the angle between the hour hand and the minute hand on a clock
-        /// </summary>
-        /// <param name="hour">The hour of the time as string type</param>
-        /// <param name="min">The minute of the time as string type</param>
-        /// <returns>the smallest angle between the hour hand and minute hand on a clock</returns>
-        public static double FindAngleBetweenClockHands(string h, string m)
-        {
-            int hour = Convert.ToInt32(h);
-            int min = Convert.ToInt32(m);
-            return FindAngleBetweenClockHands(hour, min);
         }
     }
 }

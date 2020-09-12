@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Q1Entity
 {
+    // An extension found on SO https://stackoverflow.com/questions/42993860/entity-framework-core-update-many-to-many
+    // that helps with updating many to many db operations
     public static class ManyToMany
     {
         public static void TryUpdateManyToMany<T, TKey>(this DbContext db, IEnumerable<T> currentItems, IEnumerable<T> newItems, Func<T, TKey> getKey) where T : class

@@ -6,9 +6,6 @@ using Q1.Services;
 
 namespace Q1
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -28,7 +25,6 @@ namespace Q1
 
             services.AddScoped<UserStateServices>();
             services.AddSingleton<UserState>();
-
             services.AddScoped<DirectoryItemStateServices>();
             services.AddSingleton<DirectoryItemState>(state =>
             new DirectoryItemState(@"C:\WpfTest"));
