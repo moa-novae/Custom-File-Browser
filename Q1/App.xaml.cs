@@ -26,8 +26,9 @@ namespace Q1
             services.AddScoped<UserStateServices>();
             services.AddSingleton<UserState>();
             services.AddScoped<DirectoryItemStateServices>();
+            // The folder which you monitor can be changed in app.config
             services.AddSingleton<DirectoryItemState>(state =>
-            new DirectoryItemState(@"C:\WpfTest"));
+            new DirectoryItemState(Q1.Properties.Settings.Default.DirectoryPath));
             services.AddScoped<MainViewModel>();
 
             return services.BuildServiceProvider();
