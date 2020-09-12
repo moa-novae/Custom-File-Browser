@@ -2,7 +2,7 @@
 
 namespace Q1Entity.Migrations
 {
-    public partial class initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +11,7 @@ namespace Q1Entity.Migrations
                 columns: table => new
                 {
                     DirectoryItemId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Notes = table.Column<string>(nullable: true),
                     Type = table.Column<int>(nullable: false),
                     FullPath = table.Column<string>(nullable: true)
@@ -26,7 +26,7 @@ namespace Q1Entity.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true)

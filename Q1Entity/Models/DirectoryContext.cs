@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,7 +14,15 @@ namespace Q1Entity
         public DbSet<UserDirectoryItem> UserDirectoryItems { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["TechAssessmentQ1"].ConnectionString);
+            // store db file at sqlitePath
+            var sqlitePath = Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData),
+                "pulsenics");
+            // check if the directory exists at sqlitePath, If not, create it
+            if (!Directory.Exists(sqlitePath)) 
+                Directory.CreateDirectory(sqlitePath);
+            optionsBuilder.UseSqlite($"Data Source={Path.Combine(sqlitePath, "TechAssessmentQ1.db")}");
+            base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
